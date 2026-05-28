@@ -101,3 +101,9 @@ Batch scripts: **`Init`** → **`GetKeystore`**.
 ## Documentation
 
 - [Core Auto resources](https://coreauto.coredf.com/resources)
+
+## License
+
+Copyright Core DF. Licensed under the [Apache License, Version 2.0](../../LICENSE).
+
+Source files include the standard Apache 2.0 header from the repository [`LICENSE`](../../LICENSE) appendix.
