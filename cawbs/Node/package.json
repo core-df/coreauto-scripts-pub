@@ -1,0 +1,10 @@
+{
+  "name": "@core-df/cawbs",
+  "version": "1.0.0",
+  "description": "Core Auto Collector (cawbs) client for Node.js",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18"
+  }
+}

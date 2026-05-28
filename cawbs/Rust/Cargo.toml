@@ -1,0 +1,11 @@
+[package]
+name = "cawbs"
+version = "1.0.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Core Auto Collector (cawbs) client for Rust"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+ureq = { version = "2", features = ["json"] }
