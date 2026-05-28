@@ -11,13 +11,14 @@ This repo is **not** the Core Auto runtime. Agents, workers, and PostgreSQL orch
 | Library | Description |
 |---------|-------------|
 | [**cawbs**](cawbs/README.md) | Client for the [Core Auto Collector](https://coreauto.coredf.com/resources) REST API — authentication, real-time payloads, keystore, batch, and ingress variants. |
+| [**_examples**](_examples/README.md) | End-to-end sample step + ingress bridge combining multiple libraries. |
 | [**queues**](queues/README.md) | Messaging — produce from steps; [ingress bridge](queues/ingress/Python/README.md) consumes and triggers events via **cawbsingress**. |
 | [**http**](http/README.md) | Generic REST/HTTP client. |
 | [**files**](files/README.md) | Local file and SFTP transfer. |
 | [**notify**](notify/README.md) | Slack, Teams, email, PagerDuty. |
 | [**s3**](s3/README.md) | S3-compatible object get/put/list. |
 | [**transform**](transform/README.md) | JSON, CSV, and XML utilities. |
-| [**Examples**](_examples/README.md) | End-to-end sample step + ingress bridge combining multiple libraries. |
+
 
 ## Language implementations
 
