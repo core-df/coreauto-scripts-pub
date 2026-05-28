@@ -157,6 +157,101 @@ export class Session {
     return { status_code: statusCode, payload: body.payload };
   }
 
+  async postEvent(eventName, payload, eventSource) {
+    if (!this.initialized) {
+      return { status_code: 603, error: 'Init required' };
+    }
+    const body = { eventName, payload };
+    if (eventSource !== undefined && eventSource !== null) {
+      body.eventSource = eventSource;
+    }
+    const { statusCode, body: respBody, transportError } = await doRequest(
+      'POST',
+      `${this.baseURL}/v1/rtevent`,
+      this.headers,
+      JSON.stringify(body),
+    );
+    if (transportError) {
+      return { status_code: statusCode, error: 'inaccessible' };
+    }
+    if (statusCode >= 400) {
+      return apiError(statusCode, respBody);
+    }
+    if (respBody === null) {
+      return { status_code: statusCode, error: 'inaccessible' };
+    }
+    return {
+      status_code: statusCode,
+      eventId: respBody.eventId,
+      actionId: respBody.actionId,
+      createdAt: respBody.createdAt,
+    };
+  }
+
+  async getEventStatus(actionId) {
+    if (!this.initialized) {
+      return { status_code: 603, error: 'Init required' };
+    }
+    const { statusCode, body, transportError } = await doRequest(
+      'GET',
+      `${this.baseURL}/v1/rtevent/status/${actionId}`,
+      this.headers,
+    );
+    if (transportError) {
+      return { status_code: statusCode, error: 'inaccessible' };
+    }
+    if (statusCode >= 400) {
+      return apiError(statusCode, body);
+    }
+    if (body === null) {
+      return { status_code: statusCode, error: 'inaccessible' };
+    }
+    return { status_code: statusCode, status: body };
+  }
+
+  async getEventList() {
+    if (!this.initialized) {
+      return { status_code: 603, error: 'Init required' };
+    }
+    const { statusCode, body, transportError } = await doRequest(
+      'GET',
+      `${this.baseURL}/v1/rtevent/list`,
+      this.headers,
+    );
+    if (transportError) {
+      return { status_code: statusCode, error: 'inaccessible' };
+    }
+    if (statusCode >= 400) {
+      return apiError(statusCode, body);
+    }
+    if (body === null) {
+      return { status_code: statusCode, error: 'inaccessible' };
+    }
+    return { status_code: statusCode, events: body };
+  }
+
+  async submitFlag(name, systemName, sourceSystemName, date) {
+    if (!this.initialized) {
+      return { status_code: 603, error: 'Init required' };
+    }
+    const { statusCode, body, transportError } = await doRequest(
+      'POST',
+      `${this.baseURL}/v1/flag`,
+      this.headers,
+      JSON.stringify({ name, systemName, sourceSystemName, date }),
+    );
+    if (transportError) {
+      return { status_code: statusCode, error: 'inaccessible' };
+    }
+    if (statusCode >= 400) {
+      return apiError(statusCode, body);
+    }
+    if (body === null) {
+      return { status_code: statusCode, error: 'inaccessible' };
+    }
+    return { status_code: statusCode, flagStatus: body.status };
+  }
+
   async getKeystore(keylist) {
     if (!this.initialized) {
       return { status_code: 603, error: 'Init required' };

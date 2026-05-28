@@ -46,6 +46,13 @@ wbs_result wbs_put_step_payload(wbs_session *session, const char *action_id,
 wbs_result wbs_get_step_payload(wbs_session *session, const char *action_id,
                                 const char *step_name);
 wbs_result wbs_get_keystore(wbs_session *session, const char *keylist);
+wbs_result wbs_post_event(wbs_session *session, const char *event_name,
+                            const char *payload_json, const char *event_source);
+wbs_result wbs_get_event_status(wbs_session *session, const char *action_id);
+wbs_result wbs_get_event_list(wbs_session *session);
+wbs_result wbs_submit_flag(wbs_session *session, const char *name,
+                           const char *system_name, const char *source_system_name,
+                           const char *date);
 
 #ifdef __cplusplus
 }

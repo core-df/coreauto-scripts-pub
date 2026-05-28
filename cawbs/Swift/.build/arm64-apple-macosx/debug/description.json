@@ -1,0 +1,238 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.Cawbs-arm64-apple-macosx-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/sources",
+      "importPath" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/Sources/Cawbs/Cawbs.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/Sources/Cawbs/WbsSession.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "Cawbs",
+      "moduleOutputPath" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Modules/Cawbs.swiftmodule",
+      "objects" : [
+        "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/Cawbs.swift.o",
+        "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/WbsSession.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx12.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/include/Cawbs-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "swift"
+      ],
+      "outputFileMapPath" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/Cawbs.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/WbsSession.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Modules/Cawbs.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/Sources/Cawbs/Cawbs.swift",
+        "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/Sources/Cawbs/WbsSession.swift"
+      ],
+      "tempsPath" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "Cawbs" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "Cawbs",
+      "-package-name",
+      "swift",
+      "-c",
+      "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/Sources/Cawbs/Cawbs.swift",
+      "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/Sources/Cawbs/WbsSession.swift",
+      "-I",
+      "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx12.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/include/Cawbs-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "swift",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "Cawbs" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/Sources/Cawbs/Cawbs.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/Sources/Cawbs/WbsSession.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/sources"
+    },
+    "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

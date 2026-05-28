@@ -157,5 +157,66 @@ module Wbs
       end
       Result.new(status_code: status_code, answer: body)
     end
+
+    def post_event(event_name, payload, event_source: nil)
+      return Result.new(status_code: 603, error: 'Init required') unless @initialized
+
+      body = { eventName: event_name, payload: payload }
+      body[:eventSource] = event_source unless event_source.nil?
+      status_code, resp = Wbs.do_request(
+        :post,
+        "#{@base_url}/v1/rtevent",
+        @headers,
+        JSON.generate(body)
+      )
+      return Result.new(status_code: status_code, error: 'inaccessible') if status_code.zero?
+      return Wbs.api_error(status_code, resp) if status_code >= 400
+      return Result.new(status_code: status_code, error: 'inaccessible') if resp.nil?
+
+      Result.new(status_code: status_code, payload: resp)
+    end
+
+    def get_event_status(action_id)
+      return Result.new(status_code: 603, error: 'Init required') unless @initialized
+
+      status_code, body = Wbs.do_request(
+        :get,
+        "#{@base_url}/v1/rtevent/status/#{action_id}",
+        @headers
+      )
+      return Result.new(status_code: status_code, error: 'inaccessible') if status_code.zero?
+      return Wbs.api_error(status_code, body) if status_code >= 400
+      return Result.new(status_code: status_code, error: 'inaccessible') if body.nil?
+
+      Result.new(status_code: status_code, payload: body)
+    end
+
+    def get_event_list
+      return Result.new(status_code: 603, error: 'Init required') unless @initialized
+
+      status_code, body = Wbs.do_request(:get, "#{@base_url}/v1/rtevent/list", @headers)
+      return Result.new(status_code: status_code, error: 'inaccessible') if status_code.zero?
+      return Wbs.api_error(status_code, body) if status_code >= 400
+      return Result.new(status_code: status_code, error: 'inaccessible') if body.nil?
+
+      Result.new(status_code: status_code, payload: body)
+    end
+
+    def submit_flag(name, system_name, source_system_name, date)
+      return Result.new(status_code: 603, error: 'Init required') unless @initialized
+
+      body_json = JSON.generate(
+        name: name,
+        systemName: system_name,
+        sourceSystemName: source_system_name,
+        date: date
+      )
+      status_code, body = Wbs.do_request(:post, "#{@base_url}/v1/flag", @headers, body_json)
+      return Result.new(status_code: status_code, error: 'inaccessible') if status_code.zero?
+      return Wbs.api_error(status_code, body) if status_code >= 400
+      return Result.new(status_code: status_code, error: 'inaccessible') if body.nil?
+
+      Result.new(status_code: status_code, payload: body)
+    end
   end
 end

@@ -1,0 +1,19 @@
+{
+  "": {
+    "swift-dependencies": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/primary.swiftdeps"
+  },
+  "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/Sources/Cawbs/Cawbs.swift": {
+    "dependencies": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/Cawbs.d",
+    "object": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/Cawbs.swift.o",
+    "swiftmodule": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/Cawbs~partial.swiftmodule",
+    "swift-dependencies": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/Cawbs.swiftdeps",
+    "diagnostics": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/Cawbs.dia"
+  },
+  "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/Sources/Cawbs/WbsSession.swift": {
+    "dependencies": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/WbsSession.d",
+    "object": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/WbsSession.swift.o",
+    "swiftmodule": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/WbsSession~partial.swiftmodule",
+    "swift-dependencies": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/WbsSession.swiftdeps",
+    "diagnostics": "/Users/wojciechmarzec/Documents/Coredf/coreauto/coreauto-scripts-pub/cawbs/Swift/.build/arm64-apple-macosx/debug/Cawbs.build/WbsSession.dia"
+  }
+}

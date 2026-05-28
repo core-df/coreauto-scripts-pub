@@ -48,3 +48,26 @@ object CawbsBatch:
     else sess.authenticate(env, accessCode, baseUrl)
 
   def GetKeystore(keylist: String): Result = sess.getKeystore(keylist)
+
+object CawbsIngress:
+  private val sess = WbsSession()
+
+  def Init(): Result =
+    val env = sys.env.getOrElse("ENV", "")
+    val accessCode = sys.env.getOrElse("CA_ACCESS_CODE", "")
+    val baseUrl = sys.env.getOrElse("CA_WBS_URL", "")
+    if env.isBlank || accessCode.isBlank || baseUrl.isBlank then
+      WbsSession.missingEnv("ENV, CA_ACCESS_CODE, CA_WBS_URL")
+    else sess.authenticate(env, accessCode, baseUrl)
+
+  def PostEvent(eventName: String, payload: Any, eventSource: String = null): Result =
+    sess.postEvent(eventName, payload, eventSource)
+
+  def GetEventStatus(actionId: String): Result = sess.getEventStatus(actionId)
+
+  def GetEventList(): Result = sess.getEventList()
+
+  def SubmitFlag(name: String, systemName: String, sourceSystemName: String, date: String): Result =
+    sess.submitFlag(name, systemName, sourceSystemName, date)
+
+  def GetKeystore(keylist: String): Result = sess.getKeystore(keylist)

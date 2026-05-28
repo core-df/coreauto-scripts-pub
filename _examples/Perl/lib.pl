@@ -1,0 +1,13 @@
+use FindBin qw($Bin);
+use lib "$Bin/../../cawbs/Perl/lib";
+use lib "$Bin/../../http/Perl/lib";
+use lib "$Bin/../../files/Perl/lib";
+use lib "$Bin/../../transform/Perl/lib";
+use lib "$Bin/../../queues/kafka/Perl/lib";
+use lib "$Bin/../../queues/rabbit/Perl/lib";
+use lib "$Bin/../../queues/sqs/Perl/lib";
+require Cawbs;
+require Fileclient;
+require Transformclient;
+require Kafkaclient;
+1;

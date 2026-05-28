@@ -109,6 +109,61 @@ class WbsSession {
         return Result(out.statusCode, payload = parsed["payload"])
     }
 
+    fun postEvent(eventName: String, payload: Any?, eventSource: String? = null): Result {
+        if (!initialized) return Result(603, "Init required")
+        val body = buildMap<String, Any?> {
+            put("eventName", eventName)
+            put("payload", payload)
+            if (eventSource != null) put("eventSource", eventSource)
+        }
+        val out = request("POST", "$baseUrl/v1/rtevent", Json.stringify(body))
+        if (out.transportError) return Result(out.statusCode, "inaccessible")
+        if (out.statusCode >= 400) return apiError(out.statusCode, out.body)
+        val parsed = Json.parse(out.body) as? Map<*, *>
+            ?: return Result(out.statusCode, "inaccessible")
+        val resultPayload = buildMap<String, Any?> {
+            parsed["eventId"]?.let { put("eventId", it) }
+            parsed["actionId"]?.let { put("actionId", it) }
+            parsed["createdAt"]?.let { put("createdAt", it) }
+        }
+        return Result(out.statusCode, payload = resultPayload)
+    }
+
+    fun getEventStatus(actionId: String): Result {
+        if (!initialized) return Result(603, "Init required")
+        val out = request("GET", "$baseUrl/v1/rtevent/status/$actionId")
+        if (out.transportError) return Result(out.statusCode, "inaccessible")
+        if (out.statusCode >= 400) return apiError(out.statusCode, out.body)
+        val parsed = Json.parse(out.body) ?: return Result(out.statusCode, "inaccessible")
+        return Result(out.statusCode, payload = parsed)
+    }
+
+    fun getEventList(): Result {
+        if (!initialized) return Result(603, "Init required")
+        val out = request("GET", "$baseUrl/v1/rtevent/list")
+        if (out.transportError) return Result(out.statusCode, "inaccessible")
+        if (out.statusCode >= 400) return apiError(out.statusCode, out.body)
+        val parsed = Json.parse(out.body) ?: return Result(out.statusCode, "inaccessible")
+        return Result(out.statusCode, payload = parsed)
+    }
+
+    fun submitFlag(name: String, systemName: String, sourceSystemName: String, date: String): Result {
+        if (!initialized) return Result(603, "Init required")
+        val body = mapOf(
+            "name" to name,
+            "systemName" to systemName,
+            "sourceSystemName" to sourceSystemName,
+            "date" to date,
+        )
+        val out = request("POST", "$baseUrl/v1/flag", Json.stringify(body))
+        if (out.transportError) return Result(out.statusCode, "inaccessible")
+        if (out.statusCode >= 400) return apiError(out.statusCode, out.body)
+        val parsed = Json.parse(out.body) as? Map<*, *>
+            ?: return Result(out.statusCode, "inaccessible")
+        val resultPayload = parsed["status"]?.let { mapOf("flagStatus" to it) }
+        return Result(out.statusCode, payload = resultPayload)
+    }
+
     @Suppress("UNCHECKED_CAST")
     fun getKeystore(keylist: String): Result {
         if (!initialized) return Result(603, "Init required")

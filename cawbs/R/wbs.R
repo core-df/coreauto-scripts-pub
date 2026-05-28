@@ -170,3 +170,89 @@ wbs_get_keystore <- function(keylist) {
   }
   list(status_code = out$status_code, answer = out$body)
 }
+
+wbs_post_event <- function(event_name, payload, event_source = NULL) {
+  if (!isTRUE(.wbs_sess$initialized)) {
+    return(list(status_code = 603L, error = "Init required"))
+  }
+  body <- list(eventName = event_name, payload = payload)
+  if (!is.null(event_source)) {
+    body$eventSource <- event_source
+  }
+  todo <- jsonlite::toJSON(body, auto_unbox = TRUE)
+  out <- wbs_do_request("POST", paste0(.wbs_sess$base_url, "/v1/rtevent"), wbs_auth_headers(), todo)
+  if (isTRUE(out$transport_error)) {
+    return(list(status_code = out$status_code, error = "inaccessible"))
+  }
+  if (out$status_code >= 400L) {
+    return(wbs_api_error(out$status_code, out$body))
+  }
+  if (is.null(out$body)) {
+    return(list(status_code = out$status_code, error = "inaccessible"))
+  }
+  list(status_code = out$status_code, payload = out$body)
+}
+
+wbs_get_event_status <- function(action_id) {
+  if (!isTRUE(.wbs_sess$initialized)) {
+    return(list(status_code = 603L, error = "Init required"))
+  }
+  out <- wbs_do_request(
+    "GET",
+    paste0(.wbs_sess$base_url, "/v1/rtevent/status/", action_id),
+    wbs_auth_headers()
+  )
+  if (isTRUE(out$transport_error)) {
+    return(list(status_code = out$status_code, error = "inaccessible"))
+  }
+  if (out$status_code >= 400L) {
+    return(wbs_api_error(out$status_code, out$body))
+  }
+  if (is.null(out$body)) {
+    return(list(status_code = out$status_code, error = "inaccessible"))
+  }
+  list(status_code = out$status_code, payload = out$body)
+}
+
+wbs_get_event_list <- function() {
+  if (!isTRUE(.wbs_sess$initialized)) {
+    return(list(status_code = 603L, error = "Init required"))
+  }
+  out <- wbs_do_request("GET", paste0(.wbs_sess$base_url, "/v1/rtevent/list"), wbs_auth_headers())
+  if (isTRUE(out$transport_error)) {
+    return(list(status_code = out$status_code, error = "inaccessible"))
+  }
+  if (out$status_code >= 400L) {
+    return(wbs_api_error(out$status_code, out$body))
+  }
+  if (is.null(out$body)) {
+    return(list(status_code = out$status_code, error = "inaccessible"))
+  }
+  list(status_code = out$status_code, payload = out$body)
+}
+
+wbs_submit_flag <- function(name, system_name, source_system_name, date) {
+  if (!isTRUE(.wbs_sess$initialized)) {
+    return(list(status_code = 603L, error = "Init required"))
+  }
+  todo <- jsonlite::toJSON(
+    list(
+      name = name,
+      systemName = system_name,
+      sourceSystemName = source_system_name,
+      date = date
+    ),
+    auto_unbox = TRUE
+  )
+  out <- wbs_do_request("POST", paste0(.wbs_sess$base_url, "/v1/flag"), wbs_auth_headers(), todo)
+  if (isTRUE(out$transport_error)) {
+    return(list(status_code = out$status_code, error = "inaccessible"))
+  }
+  if (out$status_code >= 400L) {
+    return(wbs_api_error(out$status_code, out$body))
+  }
+  if (is.null(out$body)) {
+    return(list(status_code = out$status_code, error = "inaccessible"))
+  }
+  list(status_code = out$status_code, payload = out$body)
+}

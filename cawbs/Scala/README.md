@@ -8,6 +8,7 @@ Part of **coreauto-scripts-pub**. Not related to **coreauto-mngr-pub**.
 |--------|---------|
 | **`Cawbs`** | Real-time step API |
 | **`CawbsBatch`** | Batch: auth + keystore |
+| **`CawbsIngress`** | Ingress: submit events and flags |
 | **`WbsSession`** | Shared HTTP session |
 | **`Result`** | Return type |
 
@@ -34,6 +35,12 @@ require(result.statusCode == 200, result.error)
 
 val event = Cawbs.GetEventPayload()
 Cawbs.PutStepPayload(Map("status" -> "ok"))
+
+// Ingress
+import com.coredf.cawbs.CawbsIngress
+
+val ingress = CawbsIngress.Init()
+CawbsIngress.PostEvent("OrderCreated", Map("orderId" -> "123"))
 ```
 
 ## Environment variables

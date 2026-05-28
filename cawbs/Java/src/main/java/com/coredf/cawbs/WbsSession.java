@@ -159,6 +159,103 @@ public final class WbsSession {
         return new Result(out.statusCode(), null, map.get("payload"), null);
     }
 
+    public Result postEvent(String eventName, Object payload, String eventSource) {
+        if (!initialized) {
+            return new Result(603, "Init required", null, null);
+        }
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("eventName", eventName);
+        body.put("payload", payload);
+        if (eventSource != null) {
+            body.put("eventSource", eventSource);
+        }
+        HttpOutcome out = safeRequest("POST", baseUrl + "/v1/rtevent", JsonUtil.stringify(body));
+        if (out.transportError()) {
+            return new Result(out.statusCode(), "inaccessible", null, null);
+        }
+        if (out.statusCode() >= 400) {
+            return apiError(out.statusCode(), out.body());
+        }
+        Object parsed = JsonUtil.parse(out.body());
+        if (!(parsed instanceof Map<?, ?> map)) {
+            return new Result(out.statusCode(), "inaccessible", null, null);
+        }
+        Map<String, Object> resultPayload = new LinkedHashMap<>();
+        if (map.containsKey("eventId")) {
+            resultPayload.put("eventId", map.get("eventId"));
+        }
+        if (map.containsKey("actionId")) {
+            resultPayload.put("actionId", map.get("actionId"));
+        }
+        if (map.containsKey("createdAt")) {
+            resultPayload.put("createdAt", map.get("createdAt"));
+        }
+        return new Result(out.statusCode(), null, resultPayload, null);
+    }
+
+    public Result getEventStatus(String actionId) {
+        if (!initialized) {
+            return new Result(603, "Init required", null, null);
+        }
+        HttpOutcome out = safeRequest("GET", baseUrl + "/v1/rtevent/status/" + actionId, null);
+        if (out.transportError()) {
+            return new Result(out.statusCode(), "inaccessible", null, null);
+        }
+        if (out.statusCode() >= 400) {
+            return apiError(out.statusCode(), out.body());
+        }
+        Object parsed = JsonUtil.parse(out.body());
+        if (parsed == null) {
+            return new Result(out.statusCode(), "inaccessible", null, null);
+        }
+        return new Result(out.statusCode(), null, parsed, null);
+    }
+
+    public Result getEventList() {
+        if (!initialized) {
+            return new Result(603, "Init required", null, null);
+        }
+        HttpOutcome out = safeRequest("GET", baseUrl + "/v1/rtevent/list", null);
+        if (out.transportError()) {
+            return new Result(out.statusCode(), "inaccessible", null, null);
+        }
+        if (out.statusCode() >= 400) {
+            return apiError(out.statusCode(), out.body());
+        }
+        Object parsed = JsonUtil.parse(out.body());
+        if (parsed == null) {
+            return new Result(out.statusCode(), "inaccessible", null, null);
+        }
+        return new Result(out.statusCode(), null, parsed, null);
+    }
+
+    public Result submitFlag(String name, String systemName, String sourceSystemName, String date) {
+        if (!initialized) {
+            return new Result(603, "Init required", null, null);
+        }
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("name", name);
+        body.put("systemName", systemName);
+        body.put("sourceSystemName", sourceSystemName);
+        body.put("date", date);
+        HttpOutcome out = safeRequest("POST", baseUrl + "/v1/flag", JsonUtil.stringify(body));
+        if (out.transportError()) {
+            return new Result(out.statusCode(), "inaccessible", null, null);
+        }
+        if (out.statusCode() >= 400) {
+            return apiError(out.statusCode(), out.body());
+        }
+        Object parsed = JsonUtil.parse(out.body());
+        if (!(parsed instanceof Map<?, ?> map)) {
+            return new Result(out.statusCode(), "inaccessible", null, null);
+        }
+        Map<String, Object> resultPayload = new LinkedHashMap<>();
+        if (map.containsKey("status")) {
+            resultPayload.put("flagStatus", map.get("status"));
+        }
+        return new Result(out.statusCode(), null, resultPayload, null);
+    }
+
     @SuppressWarnings("unchecked")
     public Result getKeystore(String keylist) {
         if (!initialized) {

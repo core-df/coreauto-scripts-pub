@@ -1,0 +1,9 @@
+# redis — PHP
+
+**Push** from steps; **Pop** for ingress bridges.
+
+See [Python](../Python/README.md) for API and environment variables.
+
+Requires `phpredis` PHP extension.
+
+Apache License 2.0.

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>CoreAuto.Examples</RootNamespace>
+    <StartupObject>CoreAuto.Examples.FullIntegrationIngress</StartupObject>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="FullIntegrationIngress.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../cawbs/DotNet/CoreAuto.Cawbs.csproj" />
+    <ProjectReference Include="../../queues/ingress/DotNet/CoreAuto.Ingress.csproj" />
+    <ProjectReference Include="../../queues/kafka/DotNet/CoreAuto.Kafka.csproj" />
+  </ItemGroup>
+</Project>

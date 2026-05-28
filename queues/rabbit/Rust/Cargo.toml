@@ -1,0 +1,12 @@
+[package]
+name = "coreauto-rabbit"
+version = "1.0.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "RabbitMQ helpers for Core Auto step scripts"
+
+[dependencies]
+lapin = "2"
+serde_json = "1"
+tokio = { version = "1", features = ["rt", "time", "macros"] }
+urlencoding = "2"

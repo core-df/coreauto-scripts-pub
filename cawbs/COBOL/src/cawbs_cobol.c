@@ -18,6 +18,7 @@
 
 #include "../../C/include/cawbs.h"
 #include "../../C/include/cawbsbatch.h"
+#include "../../C/include/cawbsingress.h"
 #include "../../C/include/wbs.h"
 
 #include <string.h>
@@ -116,6 +117,62 @@ void CAWBSBATCHINIT(int *status_code, char *error_buf)
 void CAWBSBATCHGETKS(int *status_code, char *keylist, char *answer_buf, char *error_buf)
 {
     wbs_result r = cawbsbatch_get_keystore(keylist);
+    *status_code = r.status_code;
+    copy_error(error_buf, 512, r);
+    copy_answer(answer_buf, 8192, r);
+    wbs_result_free(&r);
+}
+
+void CAWBSINGRESSINIT(int *status_code, char *error_buf)
+{
+    wbs_result r = cawbsingress_init();
+    *status_code = r.status_code;
+    copy_error(error_buf, 512, r);
+    wbs_result_free(&r);
+}
+
+void CAWBSINGRESSPOSTEVENT(int *status_code, char *answer_buf, char *error_buf,
+                           char *event_name, char *payload_json, char *event_source)
+{
+    wbs_result r = cawbsingress_post_event(event_name, payload_json,
+                                           event_source && event_source[0] ? event_source : NULL);
+    *status_code = r.status_code;
+    copy_error(error_buf, 512, r);
+    copy_answer(answer_buf, 8192, r);
+    wbs_result_free(&r);
+}
+
+void CAWBSINGRESSGETSTATUS(int *status_code, char *answer_buf, char *error_buf, char *action_id)
+{
+    wbs_result r = cawbsingress_get_event_status(action_id);
+    *status_code = r.status_code;
+    copy_error(error_buf, 512, r);
+    copy_answer(answer_buf, 8192, r);
+    wbs_result_free(&r);
+}
+
+void CAWBSINGRESSGETLIST(int *status_code, char *answer_buf, char *error_buf)
+{
+    wbs_result r = cawbsingress_get_event_list();
+    *status_code = r.status_code;
+    copy_error(error_buf, 512, r);
+    copy_answer(answer_buf, 8192, r);
+    wbs_result_free(&r);
+}
+
+void CAWBSINGRESSSUBMITFLAG(int *status_code, char *answer_buf, char *error_buf,
+                            char *name, char *system_name, char *source_system_name, char *date)
+{
+    wbs_result r = cawbsingress_submit_flag(name, system_name, source_system_name, date);
+    *status_code = r.status_code;
+    copy_error(error_buf, 512, r);
+    copy_answer(answer_buf, 8192, r);
+    wbs_result_free(&r);
+}
+
+void CAWBSINGRESSGETKS(int *status_code, char *keylist, char *answer_buf, char *error_buf)
+{
+    wbs_result r = cawbsingress_get_keystore(keylist);
     *status_code = r.status_code;
     copy_error(error_buf, 512, r);
     copy_answer(answer_buf, 8192, r);

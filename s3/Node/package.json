@@ -1,0 +1,13 @@
+{
+  "name": "@core-df/coreauto-s3",
+  "version": "1.0.0",
+  "description": "S3-compatible object storage helpers for Core Auto step scripts",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.600.0"
+  }
+}

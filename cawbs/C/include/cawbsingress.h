@@ -1,0 +1,43 @@
+/*
+ * Copyright Core DF
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Ingress-oriented cawbs C client for the Core Auto Collector.
+ *
+ * Documentation: https://coreauto.coredf.com/resources
+ */
+
+#ifndef CAWBS_CAWBSINGRESS_H
+#define CAWBS_CAWBSINGRESS_H
+
+#include "wbs.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+wbs_result cawbsingress_init(void);
+wbs_result cawbsingress_post_event(const char *event_name, const char *payload_json,
+                                   const char *event_source);
+wbs_result cawbsingress_get_event_status(const char *action_id);
+wbs_result cawbsingress_get_event_list(void);
+wbs_result cawbsingress_submit_flag(const char *name, const char *system_name,
+                                    const char *source_system_name, const char *date);
+wbs_result cawbsingress_get_keystore(const char *keylist);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* CAWBS_CAWBSINGRESS_H */

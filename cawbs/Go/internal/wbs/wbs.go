@@ -31,6 +31,12 @@ type Result struct {
 	Error      any            `json:"error,omitempty"`
 	Payload    any            `json:"payload,omitempty"`
 	Answer     map[string]any `json:"answer,omitempty"`
+	EventID    any            `json:"eventId,omitempty"`
+	ActionID   any            `json:"actionId,omitempty"`
+	CreatedAt  any            `json:"createdAt,omitempty"`
+	Events     any            `json:"events,omitempty"`
+	Status     any            `json:"status,omitempty"`
+	FlagStatus any            `json:"flagStatus,omitempty"`
 }
 
 // Session holds authenticated Collector request state.
@@ -156,6 +162,122 @@ func (s *Session) GetStepPayload(actionID, stepName string) Result {
 		return Result{StatusCode: statusCode, Error: "inaccessible"}
 	}
 	return Result{StatusCode: statusCode, Payload: resp.Payload}
+}
+
+// PostEvent submits an event to the Collector (POST /v1/rtevent).
+func (s *Session) PostEvent(eventName string, payload any, eventSource string) Result {
+	if !s.initialized {
+		return Result{StatusCode: 603, Error: "Init required"}
+	}
+
+	bodyMap := map[string]any{
+		"eventName": eventName,
+		"payload":   payload,
+	}
+	if eventSource != "" {
+		bodyMap["eventSource"] = eventSource
+	}
+	body, err := json.Marshal(bodyMap)
+	if err != nil {
+		return Result{StatusCode: 500, Error: err.Error()}
+	}
+
+	statusCode, respBody, err := doRequest(http.MethodPost, s.baseURL+"/v1/rtevent", s.headers, body)
+	if err != nil {
+		return Result{StatusCode: statusCode, Error: "inaccessible"}
+	}
+	if statusCode >= 400 {
+		return apiError(statusCode, respBody)
+	}
+
+	var resp map[string]any
+	if err := json.Unmarshal(respBody, &resp); err != nil {
+		return Result{StatusCode: statusCode, Error: "inaccessible"}
+	}
+	return Result{
+		StatusCode: statusCode,
+		EventID:    resp["eventId"],
+		ActionID:   resp["actionId"],
+		CreatedAt:  resp["createdAt"],
+	}
+}
+
+// GetEventStatus returns execution status for an action (GET /v1/rtevent/status/{actionid}).
+func (s *Session) GetEventStatus(actionID int) Result {
+	if !s.initialized {
+		return Result{StatusCode: 603, Error: "Init required"}
+	}
+
+	statusCode, respBody, err := doRequest(
+		http.MethodGet,
+		fmt.Sprintf("%s/v1/rtevent/status/%d", s.baseURL, actionID),
+		s.headers,
+		nil,
+	)
+	if err != nil {
+		return Result{StatusCode: statusCode, Error: "inaccessible"}
+	}
+	if statusCode >= 400 {
+		return apiError(statusCode, respBody)
+	}
+
+	var status any
+	if err := json.Unmarshal(respBody, &status); err != nil {
+		return Result{StatusCode: statusCode, Error: "inaccessible"}
+	}
+	return Result{StatusCode: statusCode, Status: status}
+}
+
+// GetEventList lists available event definitions (GET /v1/rtevent/list).
+func (s *Session) GetEventList() Result {
+	if !s.initialized {
+		return Result{StatusCode: 603, Error: "Init required"}
+	}
+
+	statusCode, respBody, err := doRequest(http.MethodGet, s.baseURL+"/v1/rtevent/list", s.headers, nil)
+	if err != nil {
+		return Result{StatusCode: statusCode, Error: "inaccessible"}
+	}
+	if statusCode >= 400 {
+		return apiError(statusCode, respBody)
+	}
+
+	var events any
+	if err := json.Unmarshal(respBody, &events); err != nil {
+		return Result{StatusCode: statusCode, Error: "inaccessible"}
+	}
+	return Result{StatusCode: statusCode, Events: events}
+}
+
+// SubmitFlag submits a batch flag (POST /v1/flag).
+func (s *Session) SubmitFlag(name, systemName, sourceSystemName, date string) Result {
+	if !s.initialized {
+		return Result{StatusCode: 603, Error: "Init required"}
+	}
+
+	body, err := json.Marshal(map[string]string{
+		"name":             name,
+		"systemName":       systemName,
+		"sourceSystemName": sourceSystemName,
+		"date":             date,
+	})
+	if err != nil {
+		return Result{StatusCode: 500, Error: err.Error()}
+	}
+
+	statusCode, respBody, err := doRequest(http.MethodPost, s.baseURL+"/v1/flag", s.headers, body)
+	if err != nil {
+		return Result{StatusCode: statusCode, Error: "inaccessible"}
+	}
+	if statusCode >= 400 {
+		return apiError(statusCode, respBody)
+	}
+
+	var resp map[string]any
+	if err := json.Unmarshal(respBody, &resp); err != nil {
+		return Result{StatusCode: statusCode, Error: "inaccessible"}
+	}
+	return Result{StatusCode: statusCode, FlagStatus: resp["status"]}
 }
 
 // GetKeystore fetches comma-separated keystore keys.

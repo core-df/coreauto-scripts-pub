@@ -163,4 +163,75 @@ sub get_keystore {
     return { status_code => $status_code, answer => $body };
 }
 
+sub post_event {
+    my ($self, $event_name, $payload, $event_source) = @_;
+    return { status_code => 603, error => 'Init required' } if !$self->{initialized};
+
+    my $body = { eventName => $event_name, payload => $payload };
+    $body->{eventSource} = $event_source if defined $event_source;
+
+    my ($status_code, $resp) = Wbs::do_request(
+        'POST',
+        "$self->{base_url}/v1/rtevent",
+        $self->{headers},
+        encode_json($body),
+    );
+    return { status_code => $status_code, error => 'inaccessible' } if $status_code == 0;
+    return Wbs::api_error($status_code, $resp) if $status_code >= 400;
+    return { status_code => $status_code, error => 'inaccessible' } if !defined $resp;
+
+    return { status_code => $status_code, payload => $resp };
+}
+
+sub get_event_status {
+    my ($self, $action_id) = @_;
+    return { status_code => 603, error => 'Init required' } if !$self->{initialized};
+
+    my ($status_code, $body) = Wbs::do_request(
+        'GET',
+        "$self->{base_url}/v1/rtevent/status/$action_id",
+        $self->{headers},
+    );
+    return { status_code => $status_code, error => 'inaccessible' } if $status_code == 0;
+    return Wbs::api_error($status_code, $body) if $status_code >= 400;
+    return { status_code => $status_code, error => 'inaccessible' } if !defined $body;
+
+    return { status_code => $status_code, payload => $body };
+}
+
+sub get_event_list {
+    my ($self) = @_;
+    return { status_code => 603, error => 'Init required' } if !$self->{initialized};
+
+    my ($status_code, $body) = Wbs::do_request(
+        'GET', "$self->{base_url}/v1/rtevent/list", $self->{headers});
+    return { status_code => $status_code, error => 'inaccessible' } if $status_code == 0;
+    return Wbs::api_error($status_code, $body) if $status_code >= 400;
+    return { status_code => $status_code, error => 'inaccessible' } if !defined $body;
+
+    return { status_code => $status_code, payload => $body };
+}
+
+sub submit_flag {
+    my ($self, $name, $system_name, $source_system_name, $date) = @_;
+    return { status_code => 603, error => 'Init required' } if !$self->{initialized};
+
+    my ($status_code, $body) = Wbs::do_request(
+        'POST',
+        "$self->{base_url}/v1/flag",
+        $self->{headers},
+        encode_json({
+            name             => $name,
+            systemName       => $system_name,
+            sourceSystemName => $source_system_name,
+            date             => $date,
+        }),
+    );
+    return { status_code => $status_code, error => 'inaccessible' } if $status_code == 0;
+    return Wbs::api_error($status_code, $body) if $status_code >= 400;
+    return { status_code => $status_code, error => 'inaccessible' } if ref($body) ne 'HASH';
+
+    return { status_code => $status_code, payload => $body };
+}
+
 1;

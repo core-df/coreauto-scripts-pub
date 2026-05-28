@@ -493,3 +493,206 @@ wbs_result wbs_get_keystore(wbs_session *session, const char *keylist)
     r.answer = answer_str;
     return r;
 }
+
+static wbs_result wbs_ok_json_body(int status_code, cJSON *resp)
+{
+    wbs_result r;
+    char *s;
+
+    s = cJSON_PrintUnformatted(resp);
+    if (!s) {
+        return wbs_err(status_code, "inaccessible");
+    }
+    r = wbs_ok(status_code);
+    r.payload = s;
+    return r;
+}
+
+wbs_result wbs_post_event(wbs_session *session, const char *event_name,
+                          const char *payload_json, const char *event_source)
+{
+    wbs_result r;
+    long code;
+    char *body = NULL;
+    char url[2048];
+    char *todo = NULL;
+    cJSON *resp;
+    cJSON *root;
+    cJSON *payload;
+
+    if (!session->initialized) {
+        return wbs_err(603, "Init required");
+    }
+
+    payload = cJSON_Parse(payload_json);
+    if (!payload) {
+        return wbs_err(500, "invalid payload JSON");
+    }
+    root = cJSON_CreateObject();
+    cJSON_AddStringToObject(root, "eventName", event_name);
+    cJSON_AddItemToObject(root, "payload", payload);
+    if (event_source && event_source[0]) {
+        cJSON_AddStringToObject(root, "eventSource", event_source);
+    }
+    todo = cJSON_PrintUnformatted(root);
+    cJSON_Delete(root);
+    if (!todo) {
+        return wbs_err(500, "inaccessible");
+    }
+
+    snprintf(url, sizeof(url), "%s/v1/rtevent", session->base_url);
+    if (wbs_request(session, "POST", url, todo, &code, &body) != 0) {
+        free(todo);
+        return wbs_err(0, "inaccessible");
+    }
+    free(todo);
+
+    if (code >= 400) {
+        resp = cJSON_Parse(body);
+        free(body);
+        if (!resp) {
+            return wbs_err((int)code, "inaccessible");
+        }
+        r = wbs_err_json((int)code, resp);
+        cJSON_Delete(resp);
+        return r;
+    }
+
+    resp = cJSON_Parse(body);
+    free(body);
+    if (!resp) {
+        return wbs_err((int)code, "inaccessible");
+    }
+    r = wbs_ok_json_body((int)code, resp);
+    cJSON_Delete(resp);
+    return r;
+}
+
+wbs_result wbs_get_event_status(wbs_session *session, const char *action_id)
+{
+    wbs_result r;
+    long code;
+    char *body = NULL;
+    char url[2048];
+    cJSON *resp;
+
+    if (!session->initialized) {
+        return wbs_err(603, "Init required");
+    }
+
+    snprintf(url, sizeof(url), "%s/v1/rtevent/status/%s", session->base_url, action_id);
+    if (wbs_request(session, "GET", url, NULL, &code, &body) != 0) {
+        return wbs_err(0, "inaccessible");
+    }
+    if (code >= 400) {
+        resp = cJSON_Parse(body);
+        free(body);
+        if (!resp) {
+            return wbs_err((int)code, "inaccessible");
+        }
+        r = wbs_err_json((int)code, resp);
+        cJSON_Delete(resp);
+        return r;
+    }
+
+    resp = cJSON_Parse(body);
+    free(body);
+    if (!resp) {
+        return wbs_err((int)code, "inaccessible");
+    }
+    r = wbs_ok_json_body((int)code, resp);
+    cJSON_Delete(resp);
+    return r;
+}
+
+wbs_result wbs_get_event_list(wbs_session *session)
+{
+    wbs_result r;
+    long code;
+    char *body = NULL;
+    char url[2048];
+    cJSON *resp;
+
+    if (!session->initialized) {
+        return wbs_err(603, "Init required");
+    }
+
+    snprintf(url, sizeof(url), "%s/v1/rtevent/list", session->base_url);
+    if (wbs_request(session, "GET", url, NULL, &code, &body) != 0) {
+        return wbs_err(0, "inaccessible");
+    }
+    if (code >= 400) {
+        resp = cJSON_Parse(body);
+        free(body);
+        if (!resp) {
+            return wbs_err((int)code, "inaccessible");
+        }
+        r = wbs_err_json((int)code, resp);
+        cJSON_Delete(resp);
+        return r;
+    }
+
+    resp = cJSON_Parse(body);
+    free(body);
+    if (!resp) {
+        return wbs_err((int)code, "inaccessible");
+    }
+    r = wbs_ok_json_body((int)code, resp);
+    cJSON_Delete(resp);
+    return r;
+}
+
+wbs_result wbs_submit_flag(wbs_session *session, const char *name,
+                           const char *system_name, const char *source_system_name,
+                           const char *date)
+{
+    wbs_result r;
+    long code;
+    char *body = NULL;
+    char url[2048];
+    char *todo = NULL;
+    cJSON *resp;
+    cJSON *root;
+
+    if (!session->initialized) {
+        return wbs_err(603, "Init required");
+    }
+
+    root = cJSON_CreateObject();
+    cJSON_AddStringToObject(root, "name", name);
+    cJSON_AddStringToObject(root, "systemName", system_name);
+    cJSON_AddStringToObject(root, "sourceSystemName", source_system_name);
+    cJSON_AddStringToObject(root, "date", date);
+    todo = cJSON_PrintUnformatted(root);
+    cJSON_Delete(root);
+    if (!todo) {
+        return wbs_err(500, "inaccessible");
+    }
+
+    snprintf(url, sizeof(url), "%s/v1/flag", session->base_url);
+    if (wbs_request(session, "POST", url, todo, &code, &body) != 0) {
+        free(todo);
+        return wbs_err(0, "inaccessible");
+    }
+    free(todo);
+
+    if (code >= 400) {
+        resp = cJSON_Parse(body);
+        free(body);
+        if (!resp) {
+            return wbs_err((int)code, "inaccessible");
+        }
+        r = wbs_err_json((int)code, resp);
+        cJSON_Delete(resp);
+        return r;
+    }
+
+    resp = cJSON_Parse(body);
+    free(body);
+    if (!resp) {
+        return wbs_err((int)code, "inaccessible");
+    }
+    r = wbs_ok_json_body((int)code, resp);
+    cJSON_Delete(resp);
+    return r;
+}

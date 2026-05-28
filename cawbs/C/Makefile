@@ -17,8 +17,8 @@ CFLAGS ?= -Wall -Wextra -Iinclude
 LDFLAGS ?= -lcurl -lcjson
 
 LIB_SRC = src/wbs.c
-CAWBS_SRC = src/cawbs.c src/cawbsbatch.c
-OBJS = obj/wbs.o obj/cawbs.o obj/cawbsbatch.o
+CAWBS_SRC = src/cawbs.c src/cawbsbatch.c src/cawbsingress.c
+OBJS = obj/wbs.o obj/cawbs.o obj/cawbsbatch.o obj/cawbsingress.o
 
 .PHONY: all clean
 
@@ -32,6 +32,9 @@ obj/cawbs.o: obj src/cawbs.c
 
 obj/cawbsbatch.o: obj src/cawbsbatch.c
 	$(CC) $(CFLAGS) -c src/cawbsbatch.c -o $@
+
+obj/cawbsingress.o: obj src/cawbsingress.c
+	$(CC) $(CFLAGS) -c src/cawbsingress.c -o $@
 
 libcawbs.a: $(OBJS)
 	ar rcs $@ $(OBJS)

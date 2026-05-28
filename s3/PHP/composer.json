@@ -1,0 +1,12 @@
+{
+  "name": "core-df/coreauto-s3",
+  "description": "S3 object storage helpers for Core Auto step scripts",
+  "license": "Apache-2.0",
+  "require": {
+    "php": ">=8.1",
+    "aws/aws-sdk-php": "^3.300"
+  },
+  "autoload": {
+    "classmap": ["lib/"]
+  }
+}

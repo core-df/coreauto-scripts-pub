@@ -193,3 +193,57 @@ def GetKeystore(keylist):
     if not key in js:
       return { 'status_code': 605, 'error': key + ' not found' }
   return { 'status_code': response.status_code, 'answer':js }
+
+
+def GetEventStatus(action_id=None):
+  """Return execution status for the current or given action.
+
+  Calls GET /v1/rtevent/status/{actionid}.
+
+  Args:
+      action_id: Action id (defaults to ACTIONID from the environment).
+
+  Returns:
+      dict: {'status_code': 200, 'status': ...} on success, 603 if Init was not
+            called, or an HTTP/API error dict.
+  """
+  if not wbs_iniflag :
+     return { 'status_code':603, 'error':'Init required' }
+  aid = str(action_id if action_id is not None else wbs_actionid)
+  response = requests.get(wbs_url + '/v1/rtevent/status/' + aid, headers=wbs_headers)
+
+  if response.status_code >= 400:
+    try:
+      js = response.json()
+    except :
+      return {'status_code': response.status_code, 'error': 'inaccessible'}
+    return {'status_code': response.status_code, 'error': js}
+
+  return { 'status_code': response.status_code, 'status': response.json() }
+
+
+def GetActionIdByPayload(path, search_value):
+  """Look up action id by a nested payload field value.
+
+  Calls GET /v1/rtstep/payload/actionid/{path}/{searchValue}.
+  path is comma-separated JSON property names, e.g. order,id.
+
+  Returns:
+      dict: {'status_code': 200, 'match': ...} on success, 603 if Init was not
+            called, or an HTTP/API error dict.
+  """
+  if not wbs_iniflag :
+     return { 'status_code':603, 'error':'Init required' }
+  response = requests.get(
+    wbs_url + '/v1/rtstep/payload/actionid/' + path + '/' + str(search_value),
+    headers=wbs_headers,
+  )
+
+  if response.status_code >= 400:
+    try:
+      js = response.json()
+    except :
+      return {'status_code': response.status_code, 'error': 'inaccessible'}
+    return {'status_code': response.status_code, 'error': js}
+
+  return { 'status_code': response.status_code, 'match': response.json() }

@@ -8,6 +8,7 @@ Part of **coreauto-scripts-pub**. Not related to **coreauto-mngr-pub**.
 |------|---------|
 | **`Cawbs`** | Real-time step API |
 | **`CawbsBatch`** | Batch: auth + keystore |
+| **`CawbsIngress`** | Ingress: submit events and flags |
 | **`WbsSession`** | Shared HTTP session |
 | **`Result`** | Return type |
 
@@ -33,6 +34,9 @@ guard result.statusCode == 200 else { fatalError("\(result.error!)") }
 
 let event = Cawbs.getEventPayload()
 _ = Cawbs.putStepPayload(["status": "ok"])
+
+let ingress = CawbsIngress.initSession()
+_ = CawbsIngress.postEvent("OrderCreated", payload: ["orderId": "123"])
 ```
 
 Note: `init` is reserved in Swift — the entry point is **`initSession()`**.

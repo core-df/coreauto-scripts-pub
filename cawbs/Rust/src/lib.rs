@@ -17,7 +17,9 @@
 pub mod wbs;
 pub mod cawbs;
 pub mod cawbsbatch;
+pub mod cawbsingress;
 
 pub use cawbsbatch::CawbsBatch;
+pub use cawbsingress::CawbsIngress;
 pub use cawbs::Cawbs;
 pub use wbs::{Result, Session};

@@ -227,4 +227,99 @@ final class WbsSession
         }
         return new WbsResult($statusCode, null, null, $body);
     }
+
+    public function postEvent(string $eventName, mixed $payload, ?string $eventSource = null): WbsResult
+    {
+        if (!$this->initialized) {
+            return new WbsResult(603, 'Init required');
+        }
+        $body = ['eventName' => $eventName, 'payload' => $payload];
+        if ($eventSource !== null) {
+            $body['eventSource'] = $eventSource;
+        }
+        [$statusCode, $resp] = self::doRequest(
+            'POST',
+            "{$this->baseUrl}/v1/rtevent",
+            $this->headers,
+            json_encode($body, JSON_THROW_ON_ERROR),
+        );
+        if ($statusCode === 0) {
+            return new WbsResult(0, 'inaccessible');
+        }
+        if ($statusCode >= 400) {
+            return self::apiError($statusCode, $resp);
+        }
+        if (!is_array($resp)) {
+            return new WbsResult($statusCode, 'inaccessible');
+        }
+        return new WbsResult($statusCode, null, $resp);
+    }
+
+    public function getEventStatus(string $actionId): WbsResult
+    {
+        if (!$this->initialized) {
+            return new WbsResult(603, 'Init required');
+        }
+        [$statusCode, $body] = self::doRequest(
+            'GET',
+            "{$this->baseUrl}/v1/rtevent/status/{$actionId}",
+            $this->headers,
+        );
+        if ($statusCode === 0) {
+            return new WbsResult(0, 'inaccessible');
+        }
+        if ($statusCode >= 400) {
+            return self::apiError($statusCode, $body);
+        }
+        if (!is_array($body)) {
+            return new WbsResult($statusCode, 'inaccessible');
+        }
+        return new WbsResult($statusCode, null, $body);
+    }
+
+    public function getEventList(): WbsResult
+    {
+        if (!$this->initialized) {
+            return new WbsResult(603, 'Init required');
+        }
+        [$statusCode, $body] = self::doRequest('GET', "{$this->baseUrl}/v1/rtevent/list", $this->headers);
+        if ($statusCode === 0) {
+            return new WbsResult(0, 'inaccessible');
+        }
+        if ($statusCode >= 400) {
+            return self::apiError($statusCode, $body);
+        }
+        if ($body === null) {
+            return new WbsResult($statusCode, 'inaccessible');
+        }
+        return new WbsResult($statusCode, null, $body);
+    }
+
+    public function submitFlag(
+        string $name,
+        string $systemName,
+        string $sourceSystemName,
+        string $date,
+    ): WbsResult {
+        if (!$this->initialized) {
+            return new WbsResult(603, 'Init required');
+        }
+        $json = json_encode([
+            'name' => $name,
+            'systemName' => $systemName,
+            'sourceSystemName' => $sourceSystemName,
+            'date' => $date,
+        ], JSON_THROW_ON_ERROR);
+        [$statusCode, $body] = self::doRequest('POST', "{$this->baseUrl}/v1/flag", $this->headers, $json);
+        if ($statusCode === 0) {
+            return new WbsResult(0, 'inaccessible');
+        }
+        if ($statusCode >= 400) {
+            return self::apiError($statusCode, $body);
+        }
+        if (!is_array($body)) {
+            return new WbsResult($statusCode, 'inaccessible');
+        }
+        return new WbsResult($statusCode, null, $body);
+    }
 }

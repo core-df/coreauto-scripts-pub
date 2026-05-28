@@ -1,0 +1,21 @@
+[package]
+name = "coreauto-example-step"
+version = "1.0.0"
+edition = "2021"
+license = "Apache-2.0"
+
+[[bin]]
+name = "full_integration_step"
+path = "src/full_integration_step.rs"
+
+[[bin]]
+name = "full_integration_ingress"
+path = "src/full_integration_ingress.rs"
+
+[dependencies]
+cawbs = { path = "../../cawbs/Rust" }
+coreauto-files = { path = "../../files/Rust", package = "coreauto-files" }
+coreauto-transform = { path = "../../transform/Rust", package = "coreauto-transform" }
+coreauto-kafka = { path = "../../queues/kafka/Rust", package = "coreauto-kafka" }
+coreauto-ingress = { path = "../../queues/ingress/Rust", package = "coreauto-ingress" }
+serde_json = "1"

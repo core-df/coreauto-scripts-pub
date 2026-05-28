@@ -1,0 +1,8 @@
+{
+  "name": "@core-df/coreauto-ibmmq",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": { "node": ">=18" },
+  "optionalDependencies": { "ibmmq": "^2.0.0" }
+}

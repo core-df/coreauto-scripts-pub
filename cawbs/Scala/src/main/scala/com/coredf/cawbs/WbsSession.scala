@@ -95,6 +95,56 @@ extension (s: WbsSession)
       case Some(p) => Result(out.statusCode, payload = Some(p))
       case None    => Result(out.statusCode, error = Some("inaccessible"))
 
+  def postEvent(eventName: String, payload: Any, eventSource: String | Null = null): Result =
+    if !s.initialized then return Result(603, error = Some("Init required"))
+    val body = scala.collection.mutable.Map[String, Any]("eventName" -> eventName, "payload" -> payload)
+    if eventSource != null then body("eventSource") = eventSource
+    val out = s.request("POST", s"${s.baseUrl}/v1/rtevent", Json.stringify(body.toMap))
+    if out.transportError then return Result(out.statusCode, error = Some("inaccessible"))
+    if out.statusCode >= 400 then return s.apiError(out.statusCode, out.body)
+    Json.parse(out.body) match
+      case Some(map: Map[?, ?] @unchecked) =>
+        val m = map.asInstanceOf[Map[String, Any]]
+        val resultPayload = Map.newBuilder[String, Any]
+        m.get("eventId").foreach(v => resultPayload += "eventId" -> v)
+        m.get("actionId").foreach(v => resultPayload += "actionId" -> v)
+        m.get("createdAt").foreach(v => resultPayload += "createdAt" -> v)
+        Result(out.statusCode, payload = Some(resultPayload.result()))
+      case _ => Result(out.statusCode, error = Some("inaccessible"))
+
+  def getEventStatus(actionId: String): Result =
+    if !s.initialized then return Result(603, error = Some("Init required"))
+    val out = s.request("GET", s"${s.baseUrl}/v1/rtevent/status/$actionId")
+    if out.transportError then return Result(out.statusCode, error = Some("inaccessible"))
+    if out.statusCode >= 400 then return s.apiError(out.statusCode, out.body)
+    Json.parse(out.body) match
+      case Some(v) => Result(out.statusCode, payload = Some(v))
+      case None    => Result(out.statusCode, error = Some("inaccessible"))
+
+  def getEventList(): Result =
+    if !s.initialized then return Result(603, error = Some("Init required"))
+    val out = s.request("GET", s"${s.baseUrl}/v1/rtevent/list")
+    if out.transportError then return Result(out.statusCode, error = Some("inaccessible"))
+    if out.statusCode >= 400 then return s.apiError(out.statusCode, out.body)
+    Json.parse(out.body) match
+      case Some(v) => Result(out.statusCode, payload = Some(v))
+      case None    => Result(out.statusCode, error = Some("inaccessible"))
+
+  def submitFlag(name: String, systemName: String, sourceSystemName: String, date: String): Result =
+    if !s.initialized then return Result(603, error = Some("Init required"))
+    val body = Map(
+      "name" -> name,
+      "systemName" -> systemName,
+      "sourceSystemName" -> sourceSystemName,
+      "date" -> date
+    )
+    val out = s.request("POST", s"${s.baseUrl}/v1/flag", Json.stringify(body))
+    if out.transportError then return Result(out.statusCode, error = Some("inaccessible"))
+    if out.statusCode >= 400 then return s.apiError(out.statusCode, out.body)
+    Json.parse(out.body).flatMap(_.asInstanceOf[Map[String, Any]].get("status")) match
+      case Some(status) => Result(out.statusCode, payload = Some(Map("flagStatus" -> status)))
+      case None         => Result(out.statusCode, error = Some("inaccessible"))
+
   def getKeystore(keylist: String): Result =
     if !s.initialized then return Result(603, error = Some("Init required"))
     val keys = keylist.replace(" ", "")

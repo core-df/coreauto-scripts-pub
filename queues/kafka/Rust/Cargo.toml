@@ -1,0 +1,8 @@
+[package]
+name = "coreauto-kafka"
+version = "1.0.0"
+edition = "2021"
+license = "Apache-2.0"
+[dependencies]
+serde_json = "1"
+rdkafka = { version = "0.36", features = ["cmake-build"] }

@@ -6,12 +6,13 @@ Part of **coreauto-scripts-pub**. Not related to **coreauto-mngr-pub** (PostgreS
 
 ## Modules
 
-Every language port provides two variants:
+Every language port provides three variants:
 
 | Variant | Use case | API surface |
 |---------|----------|-------------|
-| **cawbs** | Real-time steps | `Init`, `GetEventPayload`, `PutStepPayload`, `GetStepPayload`, `GetKeystore` |
+| **cawbs** | Real-time steps | `Init`, `GetEventPayload`, `PutStepPayload`, `GetStepPayload`, `GetEventStatus`, `GetActionIdByPayload`, `GetKeystore` |
 | **cawbsbatch** | Batch steps | `Init`, `GetKeystore` |
+| **cawbsingress** | Queue bridges, schedulers, external triggers | `Init`, `PostEvent`, `GetEventStatus`, `GetEventList`, `SubmitFlag`, `GetKeystore` |
 
 ## Environment variables
 
@@ -33,15 +34,30 @@ Every language port provides two variants:
 | `CA_ACCESS_CODE` | API access code |
 | `CA_WBS_URL` | Collector base URL |
 
+### Ingress (`cawbsingress`)
+
+| Variable | Description |
+|----------|-------------|
+| `ENV` | Target environment name |
+| `CA_ACCESS_CODE` | API access code |
+| `CA_WBS_URL` | Collector base URL |
+
+No `ACTIONID` or `STEPNAME` — used by queue bridges and other long-lived ingress processes.
+
 ## API endpoints
 
-| Function | HTTP |
-|----------|------|
-| `Init` | `POST /v1/auth/apicode` |
-| `GetEventPayload` | `GET /v1/rtevent/{actionId}` |
-| `PutStepPayload` | `POST /v1/rtstep/payload` |
-| `GetStepPayload` | `GET /v1/rtstep/payload/{actionId}/{stepname}` |
-| `GetKeystore` | `GET /v1/keystore/{keys}` (comma-separated key names) |
+| Function | HTTP | Module |
+|----------|------|--------|
+| `Init` | `POST /v1/auth/apicode` | all |
+| `GetEventPayload` | `GET /v1/rtevent/{actionId}` | cawbs |
+| `PostEvent` | `POST /v1/rtevent` | cawbsingress |
+| `GetEventStatus` | `GET /v1/rtevent/status/{actionid}` | cawbs, cawbsingress |
+| `GetEventList` | `GET /v1/rtevent/list` | cawbsingress |
+| `SubmitFlag` | `POST /v1/flag` | cawbsingress |
+| `PutStepPayload` | `POST /v1/rtstep/payload` | cawbs |
+| `GetStepPayload` | `GET /v1/rtstep/payload/{actionId}/{stepname}` | cawbs |
+| `GetActionIdByPayload` | `GET /v1/rtstep/payload/actionid/{path}/{searchValue}` | cawbs |
+| `GetKeystore` | `GET /v1/keystore/{keys}` | all |
 
 Call **`Init` once** before any other function.
 
@@ -65,9 +81,9 @@ On network or non-JSON HTTP responses, `error` is typically the string `"inacces
 
 | Language | Directory | Notes |
 |----------|-----------|-------|
-| Python | [`Python/`](Python/README.md) | `requests` |
-| Go | [`Go/`](Go/README.md) | stdlib only |
-| Shell (bash) | [`Shell/`](Shell/README.md) | `curl`, `jq` |
+| Python | [`Python/`](Python/README.md) | `cawbs`, `cawbsbatch`, `cawbsingress` |
+| Go | [`Go/`](Go/README.md) | `cawbs`, `cawbsbatch`, `cawbsingress` packages |
+| Shell (bash) | [`Shell/`](Shell/README.md) | `cawbs.sh`, `cawbsbatch.sh`, `cawbsingress.sh` |
 | C | [`C/`](C/README.md) | libcurl, libcjson; static library |
 | Node.js | [`Node/`](Node/README.md) | Node 18+ `fetch`; async API |
 | Java | [`Java/`](Java/README.md) | Maven, Java 11+ |
@@ -84,7 +100,7 @@ On network or non-JSON HTTP responses, `error` is typically the string `"inacces
 | Dart | [`Dart/`](Dart/README.md) | `http` package; async API |
 | COBOL | [`COBOL/`](COBOL/README.md) | GnuCOBOL; C bridge to [`C/`](C/README.md) |
 
-Pick the folder for your step script language and follow that README for prerequisites, build steps, and usage examples.
+Pick the folder for your step script language and follow that README for prerequisites, build steps, and usage examples. Languages with **cawbsbatch** also provide **cawbsingress** (same env vars as batch: `ENV`, `CA_ACCESS_CODE`, `CA_WBS_URL`).
 
 ## Typical real-time flow
 
@@ -97,6 +113,8 @@ Init  →  GetEventPayload  →  (process)  →  PutStepPayload
 ```
 
 Batch scripts: **`Init`** → **`GetKeystore`**.
+
+Queue ingress (not a step): **`cawbsingress.Init`** → **`PostEvent`** — see [`queues/ingress`](../queues/ingress/Python/README.md).
 
 ## Documentation
 

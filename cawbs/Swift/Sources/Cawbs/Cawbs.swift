@@ -72,3 +72,42 @@ public enum CawbsBatch {
         sess.getKeystore(keylist: keylist)
     }
 }
+
+public enum CawbsIngress {
+    private static let sess = WbsSession()
+
+    public static func initSession() -> Result {
+        let env = ProcessInfo.processInfo.environment["ENV"] ?? ""
+        let accessCode = ProcessInfo.processInfo.environment["CA_ACCESS_CODE"] ?? ""
+        let baseURL = ProcessInfo.processInfo.environment["CA_WBS_URL"] ?? ""
+        if env.isEmpty || accessCode.isEmpty || baseURL.isEmpty {
+            return WbsSession.missingEnv("ENV, CA_ACCESS_CODE, CA_WBS_URL")
+        }
+        return sess.authenticate(env: env, accessCode: accessCode, baseURL: baseURL)
+    }
+
+    public static func postEvent(_ eventName: String, payload: Any, eventSource: String? = nil) -> Result {
+        sess.postEvent(eventName: eventName, payload: payload, eventSource: eventSource)
+    }
+
+    public static func getEventStatus(actionID: String) -> Result {
+        sess.getEventStatus(actionID: actionID)
+    }
+
+    public static func getEventList() -> Result {
+        sess.getEventList()
+    }
+
+    public static func submitFlag(
+        name: String,
+        systemName: String,
+        sourceSystemName: String,
+        date: String
+    ) -> Result {
+        sess.submitFlag(name: name, systemName: systemName, sourceSystemName: sourceSystemName, date: date)
+    }
+
+    public static func getKeystore(keylist: String) -> Result {
+        sess.getKeystore(keylist: keylist)
+    }
+}

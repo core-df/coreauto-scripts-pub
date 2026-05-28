@@ -143,6 +143,69 @@ class WbsSession {
     return WbsResult(statusCode: out.statusCode, payload: out.body['payload']);
   }
 
+  Future<WbsResult> postEvent(String eventName, dynamic payload, {String? eventSource}) async {
+    if (!_initialized) return WbsResult(statusCode: 603, error: 'Init required');
+    final body = <String, dynamic>{
+      'eventName': eventName,
+      'payload': payload,
+    };
+    if (eventSource != null) {
+      body['eventSource'] = eventSource;
+    }
+    final out = await _request('POST', '$_baseUrl/v1/rtevent', body: jsonEncode(body));
+    if (out.transportError) return WbsResult(statusCode: out.statusCode, error: 'inaccessible');
+    if (out.statusCode >= 400) return _apiError(out.statusCode, out.body);
+    if (out.body is! Map) return WbsResult(statusCode: out.statusCode, error: 'inaccessible');
+    final map = out.body as Map;
+    final resultPayload = <String, dynamic>{};
+    if (map.containsKey('eventId')) resultPayload['eventId'] = map['eventId'];
+    if (map.containsKey('actionId')) resultPayload['actionId'] = map['actionId'];
+    if (map.containsKey('createdAt')) resultPayload['createdAt'] = map['createdAt'];
+    return WbsResult(statusCode: out.statusCode, payload: resultPayload);
+  }
+
+  Future<WbsResult> getEventStatus(String actionId) async {
+    if (!_initialized) return WbsResult(statusCode: 603, error: 'Init required');
+    final out = await _request('GET', '$_baseUrl/v1/rtevent/status/$actionId');
+    if (out.transportError) return WbsResult(statusCode: out.statusCode, error: 'inaccessible');
+    if (out.statusCode >= 400) return _apiError(out.statusCode, out.body);
+    if (out.body == null) return WbsResult(statusCode: out.statusCode, error: 'inaccessible');
+    return WbsResult(statusCode: out.statusCode, payload: out.body);
+  }
+
+  Future<WbsResult> getEventList() async {
+    if (!_initialized) return WbsResult(statusCode: 603, error: 'Init required');
+    final out = await _request('GET', '$_baseUrl/v1/rtevent/list');
+    if (out.transportError) return WbsResult(statusCode: out.statusCode, error: 'inaccessible');
+    if (out.statusCode >= 400) return _apiError(out.statusCode, out.body);
+    if (out.body == null) return WbsResult(statusCode: out.statusCode, error: 'inaccessible');
+    return WbsResult(statusCode: out.statusCode, payload: out.body);
+  }
+
+  Future<WbsResult> submitFlag(
+    String name,
+    String systemName,
+    String sourceSystemName,
+    String date,
+  ) async {
+    if (!_initialized) return WbsResult(statusCode: 603, error: 'Init required');
+    final out = await _request(
+      'POST',
+      '$_baseUrl/v1/flag',
+      body: jsonEncode({
+        'name': name,
+        'systemName': systemName,
+        'sourceSystemName': sourceSystemName,
+        'date': date,
+      }),
+    );
+    if (out.transportError) return WbsResult(statusCode: out.statusCode, error: 'inaccessible');
+    if (out.statusCode >= 400) return _apiError(out.statusCode, out.body);
+    if (out.body is! Map) return WbsResult(statusCode: out.statusCode, error: 'inaccessible');
+    final status = (out.body as Map)['status'];
+    return WbsResult(statusCode: out.statusCode, payload: {'flagStatus': status});
+  }
+
   Future<WbsResult> getKeystore(String keylist) async {
     if (!_initialized) return WbsResult(statusCode: 603, error: 'Init required');
     final keys = keylist.replaceAll(' ', '');

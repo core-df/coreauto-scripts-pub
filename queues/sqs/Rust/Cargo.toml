@@ -1,0 +1,12 @@
+[package]
+name = "coreauto-sqs"
+version = "1.0.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Amazon SQS helpers for Core Auto step scripts"
+
+[dependencies]
+aws-config = { version = "1", features = ["behavior-version-latest"] }
+aws-sdk-sqs = "1"
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread"] }

@@ -1,0 +1,10 @@
+{
+  "name": "@core-df/coreauto-http",
+  "version": "1.0.0",
+  "description": "Generic HTTP client helpers for Core Auto step scripts",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,69 @@
+# Copyright Core DF
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+require 'json'
+require_relative 'result'
+require_relative 'service_bus_rest'
+
+module Servicebusclient
+  module_function
+
+  def connection_string
+    ENV['SERVICE_BUS_CONNECTION_STRING'].to_s
+  end
+
+  def queue_name(explicit = nil)
+    explicit && !explicit.empty? ? explicit : ENV['SERVICE_BUS_QUEUE_NAME'].to_s
+  end
+
+  def encode(value)
+    return value if value.is_a?(String)
+    return JSON.generate(value) if value.is_a?(Hash) || value.is_a?(Array)
+    value.to_s
+  end
+
+  def decode(raw)
+    JSON.parse(raw)
+  rescue StandardError
+    raw.to_s
+  end
+
+  def Init
+    return CoreautoResult.missing_env('SERVICE_BUS_CONNECTION_STRING') if connection_string.empty?
+    return CoreautoResult.missing_env('SERVICE_BUS_QUEUE_NAME (or pass queue per call)') if ENV['SERVICE_BUS_QUEUE_NAME'].to_s.empty?
+    { status_code: 200 }
+  end
+
+  def Send(value, queue: nil)
+    conn = connection_string
+    q = queue_name(queue)
+    return CoreautoResult.missing_env('SERVICE_BUS_CONNECTION_STRING') if conn.empty?
+    return CoreautoResult.missing_env('SERVICE_BUS_QUEUE_NAME') if q.empty?
+
+    ServiceBusRest.send_message(conn, q, encode(value))
+  rescue StandardError => e
+    CoreautoResult.transport_error(e.message)
+  end
+
+  def Receive(queue: nil, timeout_sec: 30, max_messages: 1, complete: true)
+    conn = connection_string
+    q = queue_name(queue)
+    return CoreautoResult.missing_env('SERVICE_BUS_CONNECTION_STRING') if conn.empty?
+    return CoreautoResult.missing_env('SERVICE_BUS_QUEUE_NAME') if q.empty?
+
+    ServiceBusRest.receive_messages(conn, q, timeout_sec, max_messages, complete)
+  rescue StandardError => e
+    CoreautoResult.transport_error(e.message)
+  end
+end

@@ -29,7 +29,7 @@ cd cawbs/COBOL
 make
 ```
 
-Produces `bin/cawbs_rt` and `bin/cawbs_batch`.
+Produces `bin/cawbs_rt`, `bin/cawbs_batch`, and `bin/cawbs_ingress`.
 
 ## C bridge entry points
 
@@ -42,6 +42,12 @@ Produces `bin/cawbs_rt` and `bin/cawbs_batch`.
 | `CAWBSRTGETKS` | Keystore secrets |
 | `CAWBSBATCHINIT` | Authenticate (batch env vars) |
 | `CAWBSBATCHGETKS` | Keystore secrets |
+| `CAWBSINGRESSINIT` | Authenticate (ingress env vars) |
+| `CAWBSINGRESSPOSTEVENT` | Submit real-time event |
+| `CAWBSINGRESSGETSTATUS` | Event status by action ID |
+| `CAWBSINGRESSGETLIST` | List events |
+| `CAWBSINGRESSSUBMITFLAG` | Submit batch flag |
+| `CAWBSINGRESSGETKS` | Keystore secrets |
 
 Include **`copy/CAWBSWS.cpy`** in your program and `CALL` the entry points `USING` the copybook fields.
 
@@ -64,6 +70,8 @@ Set `COB_LIBRARY_PATH=.` (or install `libcawbs_cobol.so` on the loader path) whe
 Real-time: `ENV`, `ACTIONID`, `CA_ACCESS_CODE`, `CA_WBS_URL`, `STEPNAME`
 
 Batch: `ENV`, `CA_ACCESS_CODE`, `CA_WBS_URL`
+
+Ingress: `ENV`, `CA_ACCESS_CODE`, `CA_WBS_URL` (same as batch)
 
 ## Documentation
 

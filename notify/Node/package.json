@@ -1,0 +1,13 @@
+{
+  "name": "@core-df/coreauto-notify",
+  "version": "1.0.0",
+  "description": "Slack, Teams, email, and PagerDuty notification helpers for Core Auto",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.0"
+  }
+}

@@ -25,6 +25,18 @@ pub struct Result {
     pub payload: Option<Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub answer: Option<HashMap<String, Value>>,
+    #[serde(rename = "eventId", skip_serializing_if = "Option::is_none")]
+    pub event_id: Option<Value>,
+    #[serde(rename = "actionId", skip_serializing_if = "Option::is_none")]
+    pub action_id: Option<Value>,
+    #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub events: Option<Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<Value>,
+    #[serde(rename = "flagStatus", skip_serializing_if = "Option::is_none")]
+    pub flag_status: Option<Value>,
 }
 
 pub struct Session {
@@ -32,6 +44,23 @@ pub struct Session {
     base_url: String,
     env: String,
     token: String,
+}
+
+impl Result {
+    fn empty(status_code: i32) -> Result {
+        Result {
+            status_code,
+            error: None,
+            payload: None,
+            answer: None,
+            event_id: None,
+            action_id: None,
+            created_at: None,
+            events: None,
+            status: None,
+            flag_status: None,
+        }
+    }
 }
 
 impl Session {
@@ -50,8 +79,7 @@ impl Session {
             error: Some(Value::String(format!(
                 "Environment variables {vars} should be defined"
             ))),
-            payload: None,
-            answer: None,
+            ..Result::empty(601)
         }
     }
 
@@ -65,14 +93,12 @@ impl Session {
             Ok(v) => Result {
                 status_code,
                 error: Some(v),
-                payload: None,
-                answer: None,
+                ..Result::empty(status_code)
             },
             Err(_) => Result {
                 status_code,
                 error: Some(Value::String("inaccessible".into())),
-                payload: None,
-                answer: None,
+                ..Result::empty(status_code)
             },
         }
     }
@@ -113,8 +139,7 @@ impl Session {
             return Result {
                 status_code: 602,
                 error: Some(Value::String("init already called".into())),
-                payload: None,
-                answer: None,
+                ..Result::empty(602)
             };
         }
         self.env = env.to_string();
@@ -126,8 +151,7 @@ impl Session {
                 return Result {
                     status_code: 0,
                     error: Some(Value::String("inaccessible".into())),
-                    payload: None,
-                    answer: None,
+                    ..Result::empty(0)
                 }
             }
         };
@@ -141,8 +165,7 @@ impl Session {
                 return Result {
                     status_code: code,
                     error: Some(Value::String("inaccessible".into())),
-                    payload: None,
-                    answer: None,
+                    ..Result::empty(code)
                 }
             }
         };
@@ -151,18 +174,12 @@ impl Session {
             return Result {
                 status_code: code,
                 error: Some(Value::String("inaccessible".into())),
-                payload: None,
-                answer: None,
+                ..Result::empty(code)
             };
         }
         self.token = token.to_string();
         self.initialized = true;
-        Result {
-            status_code: code,
-            error: None,
-            payload: None,
-            answer: None,
-        }
+        Result::empty(code)
     }
 
     pub fn get_event_payload(&self, action_id: &str) -> Result {
@@ -170,8 +187,7 @@ impl Session {
             return Result {
                 status_code: 603,
                 error: Some(Value::String("Init required".into())),
-                payload: None,
-                answer: None,
+                ..Result::empty(603)
             };
         }
         let (status_code, body) = match self.request("GET", &format!("{}/v1/rtevent/{}", self.base_url, action_id), None) {
@@ -180,8 +196,7 @@ impl Session {
                 return Result {
                     status_code: 0,
                     error: Some(Value::String("inaccessible".into())),
-                    payload: None,
-                    answer: None,
+                    ..Result::empty(0)
                 }
             }
         };
@@ -195,16 +210,14 @@ impl Session {
                 return Result {
                     status_code: code,
                     error: Some(Value::String("inaccessible".into())),
-                    payload: None,
-                    answer: None,
+                    ..Result::empty(code)
                 }
             }
         };
         Result {
             status_code: code,
-            error: None,
             payload: parsed.get("payload").cloned(),
-            answer: None,
+            ..Result::empty(code)
         }
     }
 
@@ -213,8 +226,7 @@ impl Session {
             return Result {
                 status_code: 603,
                 error: Some(Value::String("Init required".into())),
-                payload: None,
-                answer: None,
+                ..Result::empty(603)
             };
         }
         let todo = serde_json::json!({
@@ -229,8 +241,7 @@ impl Session {
                 return Result {
                     status_code: 0,
                     error: Some(Value::String("inaccessible".into())),
-                    payload: None,
-                    answer: None,
+                    ..Result::empty(0)
                 }
             }
         };
@@ -238,12 +249,7 @@ impl Session {
         if code >= 400 {
             return Self::api_error(code, &body);
         }
-        Result {
-            status_code: code,
-            error: None,
-            payload: None,
-            answer: None,
-        }
+        Result::empty(code)
     }
 
     pub fn get_step_payload(&self, action_id: &str, step_name: &str) -> Result {
@@ -251,8 +257,7 @@ impl Session {
             return Result {
                 status_code: 603,
                 error: Some(Value::String("Init required".into())),
-                payload: None,
-                answer: None,
+                ..Result::empty(603)
             };
         }
         let url = format!(
@@ -265,8 +270,7 @@ impl Session {
                 return Result {
                     status_code: 0,
                     error: Some(Value::String("inaccessible".into())),
-                    payload: None,
-                    answer: None,
+                    ..Result::empty(0)
                 }
             }
         };
@@ -280,16 +284,202 @@ impl Session {
                 return Result {
                     status_code: code,
                     error: Some(Value::String("inaccessible".into())),
-                    payload: None,
-                    answer: None,
+                    ..Result::empty(code)
                 }
             }
         };
         Result {
             status_code: code,
-            error: None,
             payload: parsed.get("payload").cloned(),
-            answer: None,
+            ..Result::empty(code)
+        }
+    }
+
+    pub fn post_event(
+        &self,
+        event_name: &str,
+        payload: Value,
+        event_source: Option<&str>,
+    ) -> Result {
+        if !self.initialized {
+            return Result {
+                status_code: 603,
+                error: Some(Value::String("Init required".into())),
+                ..Result::empty(603)
+            };
+        }
+        let mut todo = serde_json::json!({
+            "eventName": event_name,
+            "payload": payload,
+        });
+        if let Some(src) = event_source {
+            todo["eventSource"] = Value::String(src.to_string());
+        }
+        let (status_code, body) = match self.request(
+            "POST",
+            &format!("{}/v1/rtevent", self.base_url),
+            Some(&todo.to_string()),
+        ) {
+            Ok(v) => v,
+            Err(_) => {
+                return Result {
+                    status_code: 0,
+                    error: Some(Value::String("inaccessible".into())),
+                    ..Result::empty(0)
+                }
+            }
+        };
+        let code = status_code as i32;
+        if code >= 400 {
+            return Self::api_error(code, &body);
+        }
+        let parsed: Value = match serde_json::from_str(&body) {
+            Ok(v) => v,
+            Err(_) => {
+                return Result {
+                    status_code: code,
+                    error: Some(Value::String("inaccessible".into())),
+                    ..Result::empty(code)
+                }
+            }
+        };
+        Result {
+            status_code: code,
+            event_id: parsed.get("eventId").cloned(),
+            action_id: parsed.get("actionId").cloned(),
+            created_at: parsed.get("createdAt").cloned(),
+            ..Result::empty(code)
+        }
+    }
+
+    pub fn get_event_status(&self, action_id: i64) -> Result {
+        if !self.initialized {
+            return Result {
+                status_code: 603,
+                error: Some(Value::String("Init required".into())),
+                ..Result::empty(603)
+            };
+        }
+        let url = format!("{}/v1/rtevent/status/{}", self.base_url, action_id);
+        let (status_code, body) = match self.request("GET", &url, None) {
+            Ok(v) => v,
+            Err(_) => {
+                return Result {
+                    status_code: 0,
+                    error: Some(Value::String("inaccessible".into())),
+                    ..Result::empty(0)
+                }
+            }
+        };
+        let code = status_code as i32;
+        if code >= 400 {
+            return Self::api_error(code, &body);
+        }
+        let parsed: Value = match serde_json::from_str(&body) {
+            Ok(v) => v,
+            Err(_) => {
+                return Result {
+                    status_code: code,
+                    error: Some(Value::String("inaccessible".into())),
+                    ..Result::empty(code)
+                }
+            }
+        };
+        Result {
+            status_code: code,
+            status: Some(parsed),
+            ..Result::empty(code)
+        }
+    }
+
+    pub fn get_event_list(&self) -> Result {
+        if !self.initialized {
+            return Result {
+                status_code: 603,
+                error: Some(Value::String("Init required".into())),
+                ..Result::empty(603)
+            };
+        }
+        let (status_code, body) = match self.request("GET", &format!("{}/v1/rtevent/list", self.base_url), None) {
+            Ok(v) => v,
+            Err(_) => {
+                return Result {
+                    status_code: 0,
+                    error: Some(Value::String("inaccessible".into())),
+                    ..Result::empty(0)
+                }
+            }
+        };
+        let code = status_code as i32;
+        if code >= 400 {
+            return Self::api_error(code, &body);
+        }
+        let parsed: Value = match serde_json::from_str(&body) {
+            Ok(v) => v,
+            Err(_) => {
+                return Result {
+                    status_code: code,
+                    error: Some(Value::String("inaccessible".into())),
+                    ..Result::empty(code)
+                }
+            }
+        };
+        Result {
+            status_code: code,
+            events: Some(parsed),
+            ..Result::empty(code)
+        }
+    }
+
+    pub fn submit_flag(
+        &self,
+        name: &str,
+        system_name: &str,
+        source_system_name: &str,
+        date: &str,
+    ) -> Result {
+        if !self.initialized {
+            return Result {
+                status_code: 603,
+                error: Some(Value::String("Init required".into())),
+                ..Result::empty(603)
+            };
+        }
+        let todo = serde_json::json!({
+            "name": name,
+            "systemName": system_name,
+            "sourceSystemName": source_system_name,
+            "date": date,
+        })
+        .to_string();
+        let (status_code, body) = match self.request("POST", &format!("{}/v1/flag", self.base_url), Some(&todo)) {
+            Ok(v) => v,
+            Err(_) => {
+                return Result {
+                    status_code: 0,
+                    error: Some(Value::String("inaccessible".into())),
+                    ..Result::empty(0)
+                }
+            }
+        };
+        let code = status_code as i32;
+        if code >= 400 {
+            return Self::api_error(code, &body);
+        }
+        let parsed: Value = match serde_json::from_str(&body) {
+            Ok(v) => v,
+            Err(_) => {
+                return Result {
+                    status_code: code,
+                    error: Some(Value::String("inaccessible".into())),
+                    ..Result::empty(code)
+                }
+            }
+        };
+        Result {
+            status_code: code,
+            flag_status: parsed.get("status").cloned(),
+            ..Result::empty(code)
         }
     }
 
@@ -298,8 +488,7 @@ impl Session {
             return Result {
                 status_code: 603,
                 error: Some(Value::String("Init required".into())),
-                payload: None,
-                answer: None,
+                ..Result::empty(603)
             };
         }
         let keys: String = keylist.chars().filter(|c| *c != ' ').collect();
@@ -310,8 +499,7 @@ impl Session {
                 return Result {
                     status_code: 0,
                     error: Some(Value::String("inaccessible".into())),
-                    payload: None,
-                    answer: None,
+                    ..Result::empty(0)
                 }
             }
         };
@@ -325,8 +513,7 @@ impl Session {
                 return Result {
                     status_code: code,
                     error: Some(Value::String("inaccessible".into())),
-                    payload: None,
-                    answer: None,
+                    ..Result::empty(code)
                 }
             }
         };
@@ -338,16 +525,14 @@ impl Session {
                 return Result {
                     status_code: 605,
                     error: Some(Value::String(format!("{key} not found"))),
-                    payload: None,
-                    answer: None,
+                    ..Result::empty(605)
                 };
             }
         }
         Result {
             status_code: code,
-            error: None,
-            payload: None,
             answer: Some(parsed),
+            ..Result::empty(code)
         }
     }
 }

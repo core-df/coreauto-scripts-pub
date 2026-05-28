@@ -187,6 +187,131 @@ public sealed class WbsSession
         return new Result { StatusCode = statusCode, Payload = payload.Clone() };
     }
 
+    public async Task<Result> PostEventAsync(string eventName, object payload, string? eventSource = null)
+    {
+        if (!_initialized)
+        {
+            return new Result { StatusCode = 603, Error = "Init required" };
+        }
+        var body = new Dictionary<string, object?> { ["eventName"] = eventName, ["payload"] = payload };
+        if (eventSource != null)
+        {
+            body["eventSource"] = eventSource;
+        }
+        var (statusCode, responseBody, transportError) = await DoRequestAsync(
+            HttpMethod.Post,
+            $"{_baseUrl}/v1/rtevent",
+            JsonSerializer.Serialize(body)).ConfigureAwait(false);
+        if (transportError)
+        {
+            return new Result { StatusCode = statusCode, Error = "inaccessible" };
+        }
+        if (statusCode >= 400)
+        {
+            return ApiError(statusCode, responseBody);
+        }
+        using var doc = JsonDocument.Parse(responseBody!);
+        var resultPayload = new Dictionary<string, JsonElement>();
+        if (doc.RootElement.TryGetProperty("eventId", out var eventId))
+        {
+            resultPayload["eventId"] = eventId.Clone();
+        }
+        if (doc.RootElement.TryGetProperty("actionId", out var actionId))
+        {
+            resultPayload["actionId"] = actionId.Clone();
+        }
+        if (doc.RootElement.TryGetProperty("createdAt", out var createdAt))
+        {
+            resultPayload["createdAt"] = createdAt.Clone();
+        }
+        return new Result { StatusCode = statusCode, Payload = JsonSerializer.SerializeToElement(resultPayload) };
+    }
+
+    public async Task<Result> GetEventStatusAsync(string actionId)
+    {
+        if (!_initialized)
+        {
+            return new Result { StatusCode = 603, Error = "Init required" };
+        }
+        var (statusCode, body, transportError) = await DoRequestAsync(
+            HttpMethod.Get,
+            $"{_baseUrl}/v1/rtevent/status/{actionId}",
+            null).ConfigureAwait(false);
+        if (transportError)
+        {
+            return new Result { StatusCode = statusCode, Error = "inaccessible" };
+        }
+        if (statusCode >= 400)
+        {
+            return ApiError(statusCode, body);
+        }
+        using var doc = JsonDocument.Parse(body!);
+        return new Result { StatusCode = statusCode, Payload = doc.RootElement.Clone() };
+    }
+
+    public async Task<Result> GetEventListAsync()
+    {
+        if (!_initialized)
+        {
+            return new Result { StatusCode = 603, Error = "Init required" };
+        }
+        var (statusCode, body, transportError) = await DoRequestAsync(
+            HttpMethod.Get,
+            $"{_baseUrl}/v1/rtevent/list",
+            null).ConfigureAwait(false);
+        if (transportError)
+        {
+            return new Result { StatusCode = statusCode, Error = "inaccessible" };
+        }
+        if (statusCode >= 400)
+        {
+            return ApiError(statusCode, body);
+        }
+        using var doc = JsonDocument.Parse(body!);
+        return new Result { StatusCode = statusCode, Payload = doc.RootElement.Clone() };
+    }
+
+    public async Task<Result> SubmitFlagAsync(
+        string name,
+        string systemName,
+        string sourceSystemName,
+        string date)
+    {
+        if (!_initialized)
+        {
+            return new Result { StatusCode = 603, Error = "Init required" };
+        }
+        var todo = JsonSerializer.Serialize(new
+        {
+            name,
+            systemName,
+            sourceSystemName,
+            date,
+        });
+        var (statusCode, body, transportError) = await DoRequestAsync(
+            HttpMethod.Post,
+            $"{_baseUrl}/v1/flag",
+            todo).ConfigureAwait(false);
+        if (transportError)
+        {
+            return new Result { StatusCode = statusCode, Error = "inaccessible" };
+        }
+        if (statusCode >= 400)
+        {
+            return ApiError(statusCode, body);
+        }
+        using var doc = JsonDocument.Parse(body!);
+        if (!doc.RootElement.TryGetProperty("status", out var status))
+        {
+            return new Result { StatusCode = statusCode, Error = "inaccessible" };
+        }
+        var resultPayload = JsonSerializer.SerializeToElement(new Dictionary<string, JsonElement>
+        {
+            ["flagStatus"] = status.Clone(),
+        });
+        return new Result { StatusCode = statusCode, Payload = resultPayload };
+    }
+
     public async Task<Result> GetKeystoreAsync(string keylist)
     {
         if (!_initialized)

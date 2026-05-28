@@ -1,0 +1,12 @@
+[package]
+name = "coreauto-s3"
+version = "1.0.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "S3-compatible object storage helpers for Core Auto step scripts"
+
+[dependencies]
+aws-config = { version = "1", features = ["behavior-version-latest"] }
+aws-sdk-s3 = "1"
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread"] }

@@ -8,8 +8,9 @@ Part of **coreauto-scripts-pub**. Not related to **coreauto-mngr-pub** (PostgreS
 
 | Module | Use case |
 |--------|----------|
-| **`cawbs.py`** | Real-time steps: event payload, step payload read/write, keystore |
+| **`cawbs.py`** | Real-time steps: read/write payloads, keystore |
 | **`cawbsbatch.py`** | Batch scripts: authentication and keystore only |
+| **`cawbsingress.py`** | Ingress bridges: submit events and flags (no ACTIONID / STEPNAME) |
 
 ## Prerequisites
 
@@ -35,6 +36,14 @@ export PYTHONPATH="/path/to/coreauto-scripts-pub/cawbs/Python:${PYTHONPATH}"
 | `STEPNAME` | Name of the current step (used by `PutStepPayload`) |
 
 ### Batch (`cawbsbatch`)
+
+| Variable | Description |
+|----------|-------------|
+| `ENV` | Target environment name |
+| `CA_ACCESS_CODE` | API access code |
+| `CA_WBS_URL` | Collector base URL |
+
+### Ingress (`cawbsingress`)
 
 | Variable | Description |
 |----------|-------------|
@@ -78,6 +87,18 @@ secrets = cawbsbatch.GetKeystore("db_user,db_password")
 db_user = secrets["answer"]["db_user"]
 ```
 
+### Ingress bridge (queue → event)
+
+```python
+import cawbsingress
+
+result = cawbsingress.Init()
+cawbsingress.PostEvent("OrderCreated", {"orderId": "123"}, event_source="kafka-orders")
+# → {status_code: 201, actionId: ..., eventId: ...}
+```
+
+See [`queues/ingress`](../../queues/ingress/Python/README.md) for combining with queue clients.
+
 ## API reference
 
 All functions return a **dict** with at least `status_code`. On success, `status_code` is the HTTP status (typically `200`). Additional fields depend on the call.
@@ -85,16 +106,29 @@ All functions return a **dict** with at least `status_code`. On success, `status
 | Function | Description |
 |----------|-------------|
 | `Init()` | Authenticate via `POST /v1/auth/apicode`. Must be called once before other functions. |
-| `GetEventPayload()` | `GET /v1/rtevent/{actionId}` — inbound event payload (`cawbs` only) |
-| `PutStepPayload(payload)` | `POST /v1/rtstep/payload` — store current step output (`cawbs` only) |
-| `GetStepPayload(stepname)` | `GET /v1/rtstep/payload/{actionId}/{stepname}` (`cawbs` only) |
-| `GetKeystore(keylist)` | `GET /v1/keystore/{keys}` — comma-separated key names |
+| `GetEventPayload()` | `GET /v1/rtevent/{actionId}` — inbound event payload |
+| `PutStepPayload(payload)` | `POST /v1/rtstep/payload` — store current step output |
+| `GetStepPayload(stepname)` | `GET /v1/rtstep/payload/{actionId}/{stepname}` |
+| `GetEventStatus(action_id=None)` | `GET /v1/rtevent/status/{actionid}` |
+| `GetActionIdByPayload(path, search_value)` | Lookup action by nested payload field |
+| `GetKeystore(keylist)` | `GET /v1/keystore/{keys}` |
+
+### cawbsingress
+
+| Function | Description |
+|----------|-------------|
+| `Init()` | Authenticate (ENV, CA_ACCESS_CODE, CA_WBS_URL only) |
+| `PostEvent(event_name, payload, event_source=None)` | `POST /v1/rtevent` — trigger workflow |
+| `GetEventStatus(action_id)` | Poll run status |
+| `GetEventList()` | List event definitions |
+| `SubmitFlag(name, system_name, source_system_name, date)` | `POST /v1/flag` |
+| `GetKeystore(keylist)` | Keystore access |
 
 ## Status codes
 
 | Code | Meaning |
 |------|---------|
-| `200` | Success (HTTP status from the Collector) |
+| `200` / `201` | Success (HTTP status from the Collector; `PostEvent` returns `201`) |
 | `601` | Required environment variable(s) not set |
 | `602` | `Init()` already called |
 | `603` | `Init()` not called |

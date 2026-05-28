@@ -164,6 +164,65 @@ function wbs.get_keystore(keylist)
   return { status_code = code, answer = body }
 end
 
+function wbs.post_event(event_name, payload, event_source)
+  if not wbs.initialized then
+    return { status_code = 603, error = "Init required" }
+  end
+  local body_tbl = { eventName = event_name, payload = payload }
+  if event_source ~= nil then
+    body_tbl.eventSource = event_source
+  end
+  local todo = wbs.encode_json(body_tbl)
+  local code, body, transport = do_request("POST", wbs.base_url .. "/v1/rtevent", auth_headers(), todo)
+  if transport then return { status_code = code, error = "inaccessible" } end
+  if code >= 400 then return wbs.api_error(code, body) end
+  if type(body) ~= "table" then return { status_code = code, error = "inaccessible" } end
+  return { status_code = code, payload = body }
+end
+
+function wbs.get_event_status(action_id)
+  if not wbs.initialized then
+    return { status_code = 603, error = "Init required" }
+  end
+  local code, body, transport = do_request(
+    "GET",
+    wbs.base_url .. "/v1/rtevent/status/" .. tostring(action_id),
+    auth_headers()
+  )
+  if transport then return { status_code = code, error = "inaccessible" } end
+  if code >= 400 then return wbs.api_error(code, body) end
+  if type(body) ~= "table" then return { status_code = code, error = "inaccessible" } end
+  return { status_code = code, payload = body }
+end
+
+function wbs.get_event_list()
+  if not wbs.initialized then
+    return { status_code = 603, error = "Init required" }
+  end
+  local code, body, transport = do_request("GET", wbs.base_url .. "/v1/rtevent/list", auth_headers())
+  if transport then return { status_code = code, error = "inaccessible" } end
+  if code >= 400 then return wbs.api_error(code, body) end
+  if body == nil then return { status_code = code, error = "inaccessible" } end
+  return { status_code = code, payload = body }
+end
+
+function wbs.submit_flag(name, system_name, source_system_name, date)
+  if not wbs.initialized then
+    return { status_code = 603, error = "Init required" }
+  end
+  local todo = wbs.encode_json({
+    name = name,
+    systemName = system_name,
+    sourceSystemName = source_system_name,
+    date = date,
+  })
+  local code, body, transport = do_request("POST", wbs.base_url .. "/v1/flag", auth_headers(), todo)
+  if transport then return { status_code = code, error = "inaccessible" } end
+  if code >= 400 then return wbs.api_error(code, body) end
+  if type(body) ~= "table" then return { status_code = code, error = "inaccessible" } end
+  return { status_code = code, payload = body }
+end
+
 -- Minimal JSON encode/decode (requires no external deps; sufficient for cawbs payloads)
 function wbs.encode_json(val)
   local t = type(val)

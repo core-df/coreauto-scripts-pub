@@ -1,0 +1,13 @@
+{
+  "name": "@core-df/coreauto-files",
+  "version": "1.0.0",
+  "description": "Local file and SFTP helpers for Core Auto step scripts",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "optionalDependencies": {
+    "ssh2-sftp-client": "^11.0.0"
+  }
+}

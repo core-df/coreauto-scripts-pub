@@ -204,4 +204,79 @@ public final class WbsSession {
             return Result(statusCode: 0, error: AnyCodable("inaccessible"))
         }
     }
+
+    public func postEvent(eventName: String, payload: Any, eventSource: String? = nil) -> Result {
+        if !initialized { return Result(statusCode: 603, error: AnyCodable("Init required")) }
+        var todoObj: [String: Any] = ["eventName": eventName, "payload": payload]
+        if let eventSource { todoObj["eventSource"] = eventSource }
+        guard let todo = try? JSONSerialization.data(withJSONObject: todoObj) else {
+            return Result(statusCode: 500, error: AnyCodable("inaccessible"))
+        }
+        do {
+            let (code, data) = try request(method: "POST", url: baseURL + "/v1/rtevent", body: todo)
+            if code >= 400 { return apiError(code, data) }
+            guard let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                return Result(statusCode: code, error: AnyCodable("inaccessible"))
+            }
+            var resultPayload: [String: Any] = [:]
+            if let eventId = obj["eventId"] { resultPayload["eventId"] = eventId }
+            if let actionId = obj["actionId"] { resultPayload["actionId"] = actionId }
+            if let createdAt = obj["createdAt"] { resultPayload["createdAt"] = createdAt }
+            return Result(statusCode: code, payload: AnyCodable(resultPayload))
+        } catch {
+            return Result(statusCode: 0, error: AnyCodable("inaccessible"))
+        }
+    }
+
+    public func getEventStatus(actionID: String) -> Result {
+        if !initialized { return Result(statusCode: 603, error: AnyCodable("Init required")) }
+        do {
+            let (code, data) = try request(method: "GET", url: baseURL + "/v1/rtevent/status/" + actionID)
+            if code >= 400 { return apiError(code, data) }
+            guard let obj = try? JSONSerialization.jsonObject(with: data) else {
+                return Result(statusCode: code, error: AnyCodable("inaccessible"))
+            }
+            return Result(statusCode: code, payload: AnyCodable(obj))
+        } catch {
+            return Result(statusCode: 0, error: AnyCodable("inaccessible"))
+        }
+    }
+
+    public func getEventList() -> Result {
+        if !initialized { return Result(statusCode: 603, error: AnyCodable("Init required")) }
+        do {
+            let (code, data) = try request(method: "GET", url: baseURL + "/v1/rtevent/list")
+            if code >= 400 { return apiError(code, data) }
+            guard let obj = try? JSONSerialization.jsonObject(with: data) else {
+                return Result(statusCode: code, error: AnyCodable("inaccessible"))
+            }
+            return Result(statusCode: code, payload: AnyCodable(obj))
+        } catch {
+            return Result(statusCode: 0, error: AnyCodable("inaccessible"))
+        }
+    }
+
+    public func submitFlag(name: String, systemName: String, sourceSystemName: String, date: String) -> Result {
+        if !initialized { return Result(statusCode: 603, error: AnyCodable("Init required")) }
+        let todoObj: [String: Any] = [
+            "name": name,
+            "systemName": systemName,
+            "sourceSystemName": sourceSystemName,
+            "date": date,
+        ]
+        guard let todo = try? JSONSerialization.data(withJSONObject: todoObj) else {
+            return Result(statusCode: 500, error: AnyCodable("inaccessible"))
+        }
+        do {
+            let (code, data) = try request(method: "POST", url: baseURL + "/v1/flag", body: todo)
+            if code >= 400 { return apiError(code, data) }
+            guard let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let status = obj["status"] else {
+                return Result(statusCode: code, error: AnyCodable("inaccessible"))
+            }
+            return Result(statusCode: code, payload: AnyCodable(["flagStatus": status]))
+        } catch {
+            return Result(statusCode: 0, error: AnyCodable("inaccessible"))
+        }
+    }
 }

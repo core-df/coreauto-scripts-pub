@@ -1,0 +1,10 @@
+{
+  "name": "@core-df/coreauto-transform",
+  "version": "1.0.0",
+  "description": "JSON, CSV, and XML transform helpers for Core Auto step scripts",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,9 @@
+[package]
+name = "coreauto-files"
+version = "1.0.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Local file helpers for Core Auto step scripts"
+
+[dependencies]
+serde_json = "1"

@@ -257,3 +257,111 @@ _wbs_get_keystore() {
 
   _wbs_set_result "$_WBS_HTTP_CODE" "" "" "$answer"
 }
+
+_wbs_post_event() {
+  local event_name=$1 payload=$2 event_source=${3:-}
+
+  _wbs_require_init || return 0
+
+  local todo
+  if [[ -n $event_source ]]; then
+    todo=$(jq -nc \
+      --arg en "$event_name" \
+      --argjson pl "$payload" \
+      --arg es "$event_source" \
+      '{eventName: $en, payload: $pl, eventSource: $es}')
+  else
+    todo=$(jq -nc \
+      --arg en "$event_name" \
+      --argjson pl "$payload" \
+      '{eventName: $en, payload: $pl}')
+  fi
+
+  if ! _wbs_curl POST "${wbs_url}/v1/rtevent" "$todo"; then
+    _wbs_set_result 0 "inaccessible"
+    return 0
+  fi
+
+  if [[ $_WBS_HTTP_CODE -ge 400 ]]; then
+    _wbs_handle_response "$_WBS_HTTP_CODE" "$_WBS_BODY"
+    return 0
+  fi
+
+  WBS_STATUS_CODE=$_WBS_HTTP_CODE
+  WBS_ERROR=""
+  WBS_RESULT=$(echo "$_WBS_BODY" | jq -c \
+    --argjson sc "$_WBS_HTTP_CODE" \
+    '{status_code: $sc, eventId: .eventId, actionId: .actionId, createdAt: .createdAt}')
+}
+
+_wbs_get_event_status() {
+  local action_id=$1
+
+  _wbs_require_init || return 0
+
+  if ! _wbs_curl GET "${wbs_url}/v1/rtevent/status/${action_id}"; then
+    _wbs_set_result 0 "inaccessible"
+    return 0
+  fi
+
+  if [[ $_WBS_HTTP_CODE -ge 400 ]]; then
+    _wbs_handle_response "$_WBS_HTTP_CODE" "$_WBS_BODY"
+    return 0
+  fi
+
+  WBS_STATUS_CODE=$_WBS_HTTP_CODE
+  WBS_ERROR=""
+  WBS_RESULT=$(echo "$_WBS_BODY" | jq -c \
+    --argjson sc "$_WBS_HTTP_CODE" \
+    '{status_code: $sc, status: .}')
+}
+
+_wbs_get_event_list() {
+  _wbs_require_init || return 0
+
+  if ! _wbs_curl GET "${wbs_url}/v1/rtevent/list"; then
+    _wbs_set_result 0 "inaccessible"
+    return 0
+  fi
+
+  if [[ $_WBS_HTTP_CODE -ge 400 ]]; then
+    _wbs_handle_response "$_WBS_HTTP_CODE" "$_WBS_BODY"
+    return 0
+  fi
+
+  WBS_STATUS_CODE=$_WBS_HTTP_CODE
+  WBS_ERROR=""
+  WBS_RESULT=$(echo "$_WBS_BODY" | jq -c \
+    --argjson sc "$_WBS_HTTP_CODE" \
+    '{status_code: $sc, events: .}')
+}
+
+_wbs_submit_flag() {
+  local name=$1 system_name=$2 source_system_name=$3 date=$4
+
+  _wbs_require_init || return 0
+
+  local todo
+  todo=$(jq -nc \
+    --arg n "$name" \
+    --arg sn "$system_name" \
+    --arg ssn "$source_system_name" \
+    --arg d "$date" \
+    '{name: $n, systemName: $sn, sourceSystemName: $ssn, date: $d}')
+
+  if ! _wbs_curl POST "${wbs_url}/v1/flag" "$todo"; then
+    _wbs_set_result 0 "inaccessible"
+    return 0
+  fi
+
+  if [[ $_WBS_HTTP_CODE -ge 400 ]]; then
+    _wbs_handle_response "$_WBS_HTTP_CODE" "$_WBS_BODY"
+    return 0
+  fi
+
+  WBS_STATUS_CODE=$_WBS_HTTP_CODE
+  WBS_ERROR=""
+  WBS_RESULT=$(echo "$_WBS_BODY" | jq -c \
+    --argjson sc "$_WBS_HTTP_CODE" \
+    '{status_code: $sc, flagStatus: .status}')
+}

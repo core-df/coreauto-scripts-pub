@@ -1,0 +1,9 @@
+[package]
+name = "coreauto-ingress"
+version = "1.0.0"
+edition = "2021"
+license = "Apache-2.0"
+
+[dependencies]
+cawbs = { path = "../../../cawbs/Rust" }
+serde_json = "1"

@@ -1,0 +1,8 @@
+name: coreauto_s3
+description: S3 object storage helpers for Core Auto step scripts
+version: 1.0.0
+license: Apache-2.0
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+dependencies:
+  minio: ^3.5.4
