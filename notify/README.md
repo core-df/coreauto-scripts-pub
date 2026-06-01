@@ -25,6 +25,10 @@ Slack, Microsoft Teams, email, and PagerDuty notification helpers.
 | Shell (bash) | [`Shell/`](Shell/) | [Shell README](Shell/README.md) |
 | Swift | [`Swift/`](Swift/) | [Swift README](Swift/README.md) |
 
+## Tests
+
+Python and Go unit tests mock HTTP and SMTP (no real webhooks or mail server). C tests use a loopback HTTP mock — see [`C/README.md`](C/README.md), [`Python/README.md`](Python/README.md), and [`Go/README.md`](Go/README.md). Run all libraries from the repo root: [`run-library-tests.sh`](../run-library-tests.sh).
+
 ## API (all languages)
 
 | Function | Description |

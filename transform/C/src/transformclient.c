@@ -1,11 +1,12 @@
 #include "../include/transformclient.h"
-#include "../../http/C/include/coreauto_result.h"
+#include "coreauto_result.h"
 #include <cJSON.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-static char *ok_obj(cJSON *extra_key, cJSON *extra_val) {
+static char *ok_obj(const char *extra_key, cJSON *extra_val)
+{
     cJSON *r = cJSON_CreateObject();
     cJSON_AddNumberToObject(r, "status_code", 200);
     cJSON_AddItemToObject(r, extra_key, extra_val);
@@ -88,7 +89,9 @@ char *transform_rows_to_csv(const char *json_rows, const char *delimiter) {
         pos += snprintf(out+pos, sizeof(out)-pos, "%s", k->string);
     }
     out[pos++]='\n';
-    cJSON_ArrayForEach(row, rows) {
+    {
+        cJSON *row = NULL;
+        cJSON_ArrayForEach(row, rows) {
         int first_col=1;
         for (cJSON *k=keys; k; k=k->next) {
             if (!first_col) out[pos++]=delim; first_col=0;
@@ -97,6 +100,7 @@ char *transform_rows_to_csv(const char *json_rows, const char *delimiter) {
             pos += snprintf(out+pos, sizeof(out)-pos, "%s", s);
         }
         out[pos++]='\n';
+        }
     }
     cJSON_Delete(rows);
     cJSON *t = cJSON_CreateString(out);

@@ -1,23 +1,29 @@
 # http — C
 
-make (libcurl, libcjson)
+Static library `libcoreauto_http.a` — JSON results via **libcurl** and **libcjson**.
 
-## Usage
+## Build
 
-```text
-Get(url) → { status_code, body }
-Post(url, json_body) → { status_code, body|error }
+```shell
+cd http/C
+make
+make test
 ```
 
 ## API
 
 | Function | Description |
 |----------|-------------|
-| `Get` | HTTP GET |
-| `Post` | HTTP POST |
-| `Put` | HTTP PUT |
-| `Delete` | HTTP DELETE |
+| `http_get` | HTTP GET |
+| `http_post_json` | HTTP POST with JSON body |
+| `http_put_json` | HTTP PUT with JSON body |
+| `http_delete` | HTTP DELETE |
 
+Returns malloc'd JSON `{status_code, body?, error?}`. Free with `coreauto_json_free()`.
+
+## Tests
+
+Loopback mock server in [`tests/c`](../../tests/c/README.md); no external HTTP required.
 
 ## License
 

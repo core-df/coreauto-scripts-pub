@@ -18,4 +18,13 @@ make
 | `s3_put_object` | Upload object |
 | `s3_list_objects` | List keys |
 
+## Tests
+
+```shell
+cd s3/C
+make test
+```
+
+Unit tests cover `s3_init` and missing-bucket paths only (no AWS CLI calls).
+
 Apache License 2.0.

@@ -20,16 +20,17 @@ Step → Queue (Produce) → downstream system
 
 ## Tests
 
-Python and Go unit tests under `queues/<backend>/Python/tests/` and `queues/<backend>/Go/...` (plus `ingress`). They mock brokers and cloud SDKs — no live Kafka, RabbitMQ, etc. required. Run everything from the repo root with [`run-library-tests.sh`](../run-library-tests.sh).
+Python, Go, and C unit tests under `queues/<backend>/{Python,Go,C}/` (plus `ingress`). Python/Go mock brokers and cloud SDKs; C tests validate env wiring (and **Kafka** produce/consume when `KAFKA_INTEGRATION=1`). No live services required for the default suite. Run everything from the repo root with [`run-library-tests.sh`](../run-library-tests.sh).
 
 ## Language implementations
 
-Each backend (`kafka`, `rabbit`, `sqs`, `redis`, `servicebus`, `nats`, `ibmmq`, `pubsub`) provides the same language folders as [**cawbs**](../cawbs/README.md), except COBOL (not applicable for messaging).
+Each backend (`kafka`, `rabbit`, `sqs`, `redis`, `servicebus`, `nats`, `ibmmq`, `pubsub`) provides the same language folders as [**cawbs**](../cawbs/README.md), except COBOL (not applicable for messaging). **C** ports expose `Init()` and JSON helpers; **Kafka** also implements `Produce` / `Consume` via librdkafka. Other backends are init-only unless extended.
 
 | Language | Typical path | Notes |
 |----------|--------------|-------|
 | Python | `queues/<backend>/Python/` | Reference implementation |
 | Go | `queues/<backend>/Go/` | |
+| C | `queues/<backend>/C/` | `*_init()` + tests; shared: [`_shared/C/`](_shared/C/README.md); **Kafka**: produce/consume ([`kafka/C/README.md`](kafka/C/README.md)); ingress: [`ingress/C/README.md`](ingress/C/README.md) |
 | Shell (bash) | `queues/<backend>/Shell/` | |
 | Node.js | `queues/<backend>/Node/` | |
 | Java | `queues/<backend>/Java/` | Maven |
@@ -41,7 +42,7 @@ Each backend (`kafka`, `rabbit`, `sqs`, `redis`, `servicebus`, `nats`, `ibmmq`, 
 | PHP | `queues/<backend>/PHP/` | |
 | Perl | `queues/<backend>/Perl/` | |
 
-**Ingress** (queue → `POST /v1/rtevent`): [`ingress/Python/`](ingress/Python/README.md), [`ingress/Shell/`](ingress/Shell/README.md), [`ingress/Node/`](ingress/Node/README.md), [`ingress/Go/`](ingress/Go/README.md), [`ingress/Java/`](ingress/Java/README.md), [`ingress/Kotlin/`](ingress/Kotlin/README.md), [`ingress/Scala/`](ingress/Scala/README.md), [`ingress/DotNet/`](ingress/DotNet/README.md).
+**Ingress** (queue → `POST /v1/rtevent`): [`ingress/Python/`](ingress/Python/README.md), [`ingress/C/`](ingress/C/README.md), [`ingress/Shell/`](ingress/Shell/README.md), [`ingress/Node/`](ingress/Node/README.md), [`ingress/Go/`](ingress/Go/README.md), [`ingress/Java/`](ingress/Java/README.md), [`ingress/Kotlin/`](ingress/Kotlin/README.md), [`ingress/Scala/`](ingress/Scala/README.md), [`ingress/DotNet/`](ingress/DotNet/README.md).
 
 Set `CA_EVENT_NAME` to the Core Auto event definition that should run when a message arrives.
 

@@ -46,7 +46,7 @@ See the [Core Auto resources](https://coreauto.coredf.com/resources) site for pr
 
 ## Tests
 
-Unit tests live under each library’s `Python/tests/` and `Go/...` packages (mocked HTTP, cloud APIs, and queues — no live services required). **cawbs** and **notify** have their own README test sections.
+Unit tests live under each library’s `Python/tests/`, `Go/...`, and `*/C/tests/` (mocked HTTP/SDKs; no live Collector or brokers required). **Queues** C clients cover all backends (`Init` + tests); **Kafka** C also implements produce/consume via librdkafka. Shared C harness: [`tests/c/README.md`](tests/c/README.md). **cawbs** and **notify** document language-specific tests in their READMEs.
 
 ```shell
 ./run-library-tests.sh
@@ -59,6 +59,8 @@ cd transform/Python && python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt && pytest tests/ -v
 
 cd transform/Go && go test ./... -v
+
+cd transform/C && make test   # gcc, libcjson; curl for cawbs/http/notify; librdkafka for queues/kafka/C
 ```
 
 ## License

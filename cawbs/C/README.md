@@ -87,6 +87,15 @@ Real-time: `ENV`, `ACTIONID`, `CA_ACCESS_CODE`, `CA_WBS_URL`, `STEPNAME`
 
 Batch: `ENV`, `CA_ACCESS_CODE`, `CA_WBS_URL`
 
+## Tests
+
+```shell
+cd cawbs/C
+make test
+```
+
+Uses a loopback HTTP mock ([`tests/c`](../../tests/c/README.md)); no Collector required. Covers `wbs`, `cawbs`, `cawbsbatch`, and `cawbsingress` init paths.
+
 ## Documentation
 
 - [Core Auto resources](https://coreauto.coredf.com/resources)

@@ -84,7 +84,7 @@ On network or non-JSON HTTP responses, `error` is typically the string `"inacces
 | Python | [`Python/`](Python/README.md) | `cawbs`, `cawbsbatch`, `cawbsingress` |
 | Go | [`Go/`](Go/README.md) | `cawbs`, `cawbsbatch`, `cawbsingress` packages |
 | Shell (bash) | [`Shell/`](Shell/README.md) | `cawbs.sh`, `cawbsbatch.sh`, `cawbsingress.sh` |
-| C | [`C/`](C/README.md) | libcurl, libcjson; static library |
+| C | [`C/`](C/README.md) | libcurl, libcjson; static library; `make test` |
 | Node.js | [`Node/`](Node/README.md) | Node 18+ `fetch`; async API |
 | Java | [`Java/`](Java/README.md) | Maven, Java 11+ |
 | C# / .NET | [`DotNet/`](DotNet/README.md) | .NET 8; async API |

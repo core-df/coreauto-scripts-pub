@@ -1,6 +1,6 @@
 # notify — C
 
-Build: `make` (requires [http/C](../../http/C/README.md) libcurl client).
+Build: `make` (requires [http/C](../../http/C/README.md) — libcurl + libcjson).
 
 | Function | Description |
 |----------|-------------|
@@ -10,5 +10,14 @@ Build: `make` (requires [http/C](../../http/C/README.md) libcurl client).
 | `notify_email` | SMTP email |
 
 COBOL bridge: [`../COBOL/`](../COBOL/README.md).
+
+## Tests
+
+```shell
+cd notify/C
+make test
+```
+
+Mocks HTTP webhooks via [`tests/c`](../../tests/c/README.md); email tests only cover missing SMTP env (no live mail server).
 
 Apache License 2.0.

@@ -2,7 +2,7 @@
 
 **Produce** messages from step scripts. **Consume** is for [ingress](../ingress/Python/README.md) bridges only — not step scripts.
 
-Part of [**queues**](../../README.md).
+Part of [**queues**](../../README.md). C port (librdkafka): [`../C/README.md`](../C/README.md).
 
 ## Prerequisites
 

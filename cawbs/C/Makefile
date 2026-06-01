@@ -14,13 +14,19 @@
 
 CC ?= gcc
 CFLAGS ?= -Wall -Wextra -Iinclude
+CFLAGS += $(EXTRA_CFLAGS)
 LDFLAGS ?= -lcurl -lcjson
+LDFLAGS += $(EXTRA_LDFLAGS)
 
 LIB_SRC = src/wbs.c
 CAWBS_SRC = src/cawbs.c src/cawbsbatch.c src/cawbsingress.c
 OBJS = obj/wbs.o obj/cawbs.o obj/cawbsbatch.o obj/cawbsingress.o
 
-.PHONY: all clean
+TEST_COMMON = ../../tests/c/mock_http.c ../../tests/c/testutil.c
+TEST_CFLAGS = -Wall -Wextra -Iinclude -I../../tests/c $(EXTRA_CFLAGS)
+TEST_LIBS = -L. -lcawbs -lcurl -lcjson $(EXTRA_LDFLAGS)
+
+.PHONY: all clean test
 
 all: libcawbs.a
 
@@ -42,5 +48,15 @@ libcawbs.a: $(OBJS)
 obj:
 	mkdir -p obj
 
+test: all tests/test_wbs tests/test_cawbs
+	./tests/test_wbs
+	./tests/test_cawbs
+
+tests/test_wbs: tests/test_wbs.c $(TEST_COMMON) | libcawbs.a
+	$(CC) $(TEST_CFLAGS) -o $@ tests/test_wbs.c $(TEST_COMMON) $(TEST_LIBS)
+
+tests/test_cawbs: tests/test_cawbs.c $(TEST_COMMON) | libcawbs.a
+	$(CC) $(TEST_CFLAGS) -o $@ tests/test_cawbs.c $(TEST_COMMON) $(TEST_LIBS)
+
 clean:
-	rm -rf obj libcawbs.a
+	rm -rf obj libcawbs.a tests/test_wbs tests/test_cawbs
