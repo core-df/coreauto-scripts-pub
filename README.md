@@ -44,6 +44,23 @@ Each top-level folder has its own README with prerequisites, environment variabl
 
 See the [Core Auto resources](https://coreauto.coredf.com/resources) site for product documentation and API reference.
 
+## Tests
+
+Unit tests live under each library’s `Python/tests/` and `Go/...` packages (mocked HTTP, cloud APIs, and queues — no live services required). **cawbs** and **notify** have their own README test sections.
+
+```shell
+./run-library-tests.sh
+```
+
+Or per module, for example:
+
+```shell
+cd transform/Python && python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt && pytest tests/ -v
+
+cd transform/Go && go test ./... -v
+```
+
 ## License
 
 Copyright Core DF. Licensed under the [Apache License, Version 2.0](LICENSE).

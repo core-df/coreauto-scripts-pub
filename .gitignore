@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.test-venv/
 
 # Local codegen / audit utilities — not part of the published snippet libraries
 scripts/

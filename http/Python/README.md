@@ -2,6 +2,14 @@
 
 Generic REST/HTTP calls from step scripts (partner APIs, webhooks, internal services). For the **Core Auto Collector**, use [**cawbs**](../../cawbs/README.md) instead.
 
+## Tests
+
+```shell
+cd http/Python
+pip install -r requirements-dev.txt -r requirements.txt
+pytest tests/ -v
+```
+
 ## Prerequisites
 
 - Python 3

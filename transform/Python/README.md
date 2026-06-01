@@ -6,6 +6,14 @@ Parse and serialize payloads between formats in step scripts (stdlib only).
 
 - Python 3 (no extra packages)
 
+## Tests
+
+```shell
+cd transform/Python
+pip install -r requirements-dev.txt
+pytest tests/ -v
+```
+
 ## Usage
 
 ```python

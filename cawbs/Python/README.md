@@ -17,6 +17,18 @@ Part of **coreauto-scripts-pub**. Not related to **coreauto-mngr-pub** (PostgreS
 - **Python 3**
 - **`requests`** — `pip install requests`
 
+## Tests
+
+Unit tests mock HTTP calls (no Collector required):
+
+```shell
+cd cawbs/Python
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt requests
+python -m pytest tests/ -v
+```
+
 Place the module on `PYTHONPATH`, or copy it next to your script:
 
 ```shell

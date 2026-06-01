@@ -7,6 +7,18 @@ Send alerts from step scripts via Slack, Teams, SMTP email, or PagerDuty.
 - Python 3
 - `pip install -r requirements.txt` (email uses stdlib `smtplib`)
 
+## Tests
+
+Unit tests mock HTTP and SMTP (no real webhooks or mail server required):
+
+```shell
+cd notify/Python
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt -r requirements.txt
+python -m pytest tests/ -v
+```
+
 ## Environment variables
 
 | Channel | Variables |

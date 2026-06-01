@@ -40,13 +40,20 @@ import (
 
 var (
 	sess       wbs.Session
-	env        = os.Getenv("ENV")
-	accessCode = os.Getenv("CA_ACCESS_CODE")
-	baseURL    = os.Getenv("CA_WBS_URL")
+	env        string
+	accessCode string
+	baseURL    string
 )
+
+func loadIngressEnv() {
+	env = os.Getenv("ENV")
+	accessCode = os.Getenv("CA_ACCESS_CODE")
+	baseURL = os.Getenv("CA_WBS_URL")
+}
 
 // Init authenticates with the Collector (no ACTIONID / STEPNAME required).
 func Init() wbs.Result {
+	loadIngressEnv()
 	if env == "" || accessCode == "" || baseURL == "" {
 		return wbs.MissingEnv("ENV, CA_ACCESS_CODE, CA_WBS_URL")
 	}

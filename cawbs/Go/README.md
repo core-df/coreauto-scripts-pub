@@ -20,6 +20,15 @@ Module path: **`github.com/core-df/coreauto-scripts-pub/cawbs/Go`**
 
 No third-party dependencies — standard library only.
 
+## Tests
+
+Unit tests mirror the Python suite (**20 cases**): **`cawbs`**, **`cawbsbatch`**, and **`cawbsingress`** each use `httptest` (no Collector required). Shared helpers live in **`internal/wbstest`**.
+
+```shell
+cd cawbs/Go
+go test ./... -v
+```
+
 ## Environment variables
 
 ### Real-time (`cawbs`)

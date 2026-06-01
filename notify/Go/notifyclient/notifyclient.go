@@ -34,7 +34,10 @@ import (
 
 const httpTimeout = 30 * time.Second
 
-var notifyHTTP = &http.Client{Timeout: httpTimeout}
+var (
+	notifyHTTP = &http.Client{Timeout: httpTimeout}
+	smtpDial   = smtp.Dial
+)
 
 // Slack sends a message to a Slack incoming webhook.
 func Slack(text string, webhookURL string) result.Result {
@@ -98,7 +101,7 @@ func Email(subject, body, toAddrs, fromAddr string) result.Result {
 	recipients := splitAddrs(toAddrs)
 	addr := fmt.Sprintf("%s:%d", host, port)
 
-	client, err := smtp.Dial(addr)
+	client, err := smtpDial(addr)
 	if err != nil {
 		return result.TransportError(err.Error())
 	}

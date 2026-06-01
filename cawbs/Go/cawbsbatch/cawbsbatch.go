@@ -42,13 +42,20 @@ import (
 
 var (
 	sess       wbs.Session
-	env        = os.Getenv("ENV")
-	accessCode = os.Getenv("CA_ACCESS_CODE")
-	baseURL    = os.Getenv("CA_WBS_URL")
+	env        string
+	accessCode string
+	baseURL    string
 )
+
+func loadBatchEnv() {
+	env = os.Getenv("ENV")
+	accessCode = os.Getenv("CA_ACCESS_CODE")
+	baseURL = os.Getenv("CA_WBS_URL")
+}
 
 // Init authenticates with the Collector and prepares shared request headers.
 func Init() wbs.Result {
+	loadBatchEnv()
 	if env == "" || accessCode == "" || baseURL == "" {
 		return wbs.MissingEnv("ENV, CA_ACCESS_CODE, CA_WBS_URL")
 	}

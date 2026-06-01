@@ -30,7 +30,7 @@ import (
 
 const requestTimeout = 60 * time.Second
 
-var httpClient = &http.Client{Timeout: requestTimeout}
+var httpClient = &http.Client{Timeout: requestTimeout} // swapped in unit tests
 
 // Get performs an HTTP GET request.
 func Get(urlStr string, headers map[string]string, params map[string]string) result.Result {

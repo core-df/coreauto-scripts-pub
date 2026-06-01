@@ -50,6 +50,14 @@ func (s *Session) Initialized() bool {
 	return s.initialized
 }
 
+// Authorization returns the bearer Authorization header value after authentication.
+func (s *Session) Authorization() string {
+	if s.headers == nil {
+		return ""
+	}
+	return s.headers.Get("Authorization")
+}
+
 // Authenticate exchanges an API access code for a bearer token.
 func (s *Session) Authenticate(env, accessCode, baseURL string) Result {
 	if s.initialized {

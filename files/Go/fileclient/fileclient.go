@@ -70,7 +70,9 @@ func LocalMove(src, dest string) result.Result {
 	return result.Result{StatusCode: 200}
 }
 
-func sftpConnect() (*ssh.Client, *sftp.Client, error) {
+var sftpConnectFn = sftpConnectImpl
+
+func sftpConnectImpl() (*ssh.Client, *sftp.Client, error) {
 	host := os.Getenv("SFTP_HOST")
 	user := os.Getenv("SFTP_USER")
 	password := os.Getenv("SFTP_PASSWORD")
@@ -129,7 +131,7 @@ func sftpConnect() (*ssh.Client, *sftp.Client, error) {
 
 // SftpGet downloads a remote file to a local path.
 func SftpGet(remotePath, localPath string) result.Result {
-	sshClient, sftpClient, err := sftpConnect()
+	sshClient, sftpClient, err := sftpConnectFn()
 	if err != nil {
 		return result.TransportError(err.Error())
 	}
@@ -161,7 +163,7 @@ func SftpGet(remotePath, localPath string) result.Result {
 
 // SftpPut uploads a local file to a remote path.
 func SftpPut(localPath, remotePath string) result.Result {
-	sshClient, sftpClient, err := sftpConnect()
+	sshClient, sftpClient, err := sftpConnectFn()
 	if err != nil {
 		return result.TransportError(err.Error())
 	}
@@ -191,7 +193,7 @@ func SftpList(remoteDir string) result.Result {
 	if remoteDir == "" {
 		remoteDir = "."
 	}
-	sshClient, sftpClient, err := sftpConnect()
+	sshClient, sftpClient, err := sftpConnectFn()
 	if err != nil {
 		return result.TransportError(err.Error())
 	}

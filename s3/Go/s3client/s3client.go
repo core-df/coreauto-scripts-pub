@@ -29,6 +29,8 @@ import (
 	"github.com/core-df/coreauto-scripts-pub/s3/Go/internal/result"
 )
 
+var awsClientFactory = awsClient
+
 func awsClient(ctx context.Context) (*s3.Client, error) {
 	region := os.Getenv("AWS_REGION")
 	if region == "" {
@@ -79,7 +81,7 @@ func GetObject(key string, bucketName string) result.Result {
 		return result.MissingEnv("S3_BUCKET")
 	}
 	ctx := context.Background()
-	client, err := awsClient(ctx)
+	client, err := awsClientFactory(ctx)
 	if err != nil {
 		return result.TransportError(err.Error())
 	}
@@ -109,7 +111,7 @@ func PutObject(key string, content string, bucketName string) result.Result {
 		return result.MissingEnv("S3_BUCKET")
 	}
 	ctx := context.Background()
-	client, err := awsClient(ctx)
+	client, err := awsClientFactory(ctx)
 	if err != nil {
 		return result.TransportError(err.Error())
 	}
@@ -131,7 +133,7 @@ func ListObjects(prefix string, bucketName string) result.Result {
 		return result.MissingEnv("S3_BUCKET")
 	}
 	ctx := context.Background()
-	client, err := awsClient(ctx)
+	client, err := awsClientFactory(ctx)
 	if err != nil {
 		return result.TransportError(err.Error())
 	}

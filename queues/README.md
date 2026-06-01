@@ -18,6 +18,10 @@ External system → Queue → ingress (PostEvent) → Core Auto → step (GetEve
 Step → Queue (Produce) → downstream system
 ```
 
+## Tests
+
+Python and Go unit tests under `queues/<backend>/Python/tests/` and `queues/<backend>/Go/...` (plus `ingress`). They mock brokers and cloud SDKs — no live Kafka, RabbitMQ, etc. required. Run everything from the repo root with [`run-library-tests.sh`](../run-library-tests.sh).
+
 ## Language implementations
 
 Each backend (`kafka`, `rabbit`, `sqs`, `redis`, `servicebus`, `nats`, `ibmmq`, `pubsub`) provides the same language folders as [**cawbs**](../cawbs/README.md), except COBOL (not applicable for messaging).

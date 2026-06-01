@@ -44,15 +44,24 @@ import (
 
 var (
 	sess       wbs.Session
-	env        = os.Getenv("ENV")
-	actionID   = os.Getenv("ACTIONID")
-	accessCode = os.Getenv("CA_ACCESS_CODE")
-	baseURL    = os.Getenv("CA_WBS_URL")
-	stepName   = os.Getenv("STEPNAME")
+	env        string
+	actionID   string
+	accessCode string
+	baseURL    string
+	stepName   string
 )
+
+func loadRTEnv() {
+	env = os.Getenv("ENV")
+	actionID = os.Getenv("ACTIONID")
+	accessCode = os.Getenv("CA_ACCESS_CODE")
+	baseURL = os.Getenv("CA_WBS_URL")
+	stepName = os.Getenv("STEPNAME")
+}
 
 // Init authenticates with the Collector and prepares shared request headers.
 func Init() wbs.Result {
+	loadRTEnv()
 	if env == "" || actionID == "" || accessCode == "" || baseURL == "" || stepName == "" {
 		return wbs.MissingEnv("ENV, ACTIONID, CA_ACCESS_CODE, CA_WBS_URL, STEPNAME")
 	}
